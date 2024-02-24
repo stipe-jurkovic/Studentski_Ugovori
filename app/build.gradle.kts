@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("plugin.serialization") version "1.4.21"
 }
 
 android {
@@ -78,10 +79,10 @@ dependencies {
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     //compose livedata state
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     //EncryptedSharedPreferences
@@ -89,4 +90,10 @@ dependencies {
 
     //pull to refresh compose
     implementation("androidx.compose.material:material:1.6.1")
+
+    // json
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+
 }

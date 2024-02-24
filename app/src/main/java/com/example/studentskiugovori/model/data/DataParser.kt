@@ -1,76 +1,38 @@
 package com.example.studentskiugovori.model.data
 
-import com.example.studentskiugovori.model.dataclasses.Exam
-import com.example.studentskiugovori.model.dataclasses.Predmet
-import com.example.studentskiugovori.model.dataclasses.Student
-import org.jsoup.nodes.Document
+import com.example.studentskiugovori.model.dataclasses.Ugovor
+import com.example.studentskiugovori.model.dataclasses.UgovoriData
+import kotlinx.serialization.json.Json
 
-fun parseExamData(data: Document): Exam {
 
-    val segment = data.select(".price-table__info").select("li")
-
-    val exam = Exam()
-    exam.name = data.select(".price-table__title").select("span").first()?.text() ?: ""
-    exam.date = data.select(".datumRok").text() ?: ""
-    exam.registerUntilDate = segment[0].text() ?: ""
-    exam.unregisterUntilDate = segment[1].text() ?: ""
-    exam.type = segment[2].text() ?: ""
-    exam.description = segment[3].text() ?: ""
-    exam.totalAttendances = data.select("#naslov1").select("p").first()?.text() ?: ""
-    exam.attendancesThisYear = data.select("#naslov2").select("p").first()?.text() ?: ""
-    return exam
-}
-
-fun parseUpisaneGodine(data: Document): List<Pair<String, String>> {
-    val listOfYears = mutableListOf<Pair<String, String>>()
-    val elements = data.select(".price-table__item")
-    for (element in elements) {
-        listOfYears.add(
-            Pair(
-                element.select(".price-table__title").text(),
-                element.select("a[title=Prikaži podatke o upisu]").attr("href")
+fun parseUgovore(data: String): List<Ugovor> {
+    val ugovoriData = Json.decodeFromString<UgovoriData>(data)
+    val lista = mutableListOf<Ugovor>()
+    for (i in 0..<ugovoriData.total) {
+        lista.add(
+            Ugovor(
+                ugovoriData.rows.GODINA[i],
+                ugovoriData.rows.UGOVOR[i],
+                ugovoriData.rows.STATUSNAZIV[i],
+                ugovoriData.rows.PARTNERNAZIVWEB[i],
+                ugovoriData.rows.PARTNERNAZIV[i],
+                ugovoriData.rows.POSAONAZIV[i],
+                ugovoriData.rows.NETO[i],
+                ugovoriData.rows.ISPLATANETO[i],
+                ugovoriData.rows.ISPLATA[i],
+                ugovoriData.rows.VALUTAUNOS[i],
+                ugovoriData.rows.RADIOODWEB[i],
+                ugovoriData.rows.RADIODOWEB[i],
+                ugovoriData.rows.CIJENAWEB[i],
+                ugovoriData.rows.JM[i],
+                ugovoriData.rows.MJESTOOBAVLJANJA[i],
+                ugovoriData.rows.STATUSWEB[i],
+                ugovoriData.rows.UPUCENWEB[i],
+                ugovoriData.rows.RAD[i],
+                ugovoriData.rows.RACUN[i],
+                ugovoriData.rows.DATUMRACUNA[i]
             )
         )
     }
-    return listOfYears
-}
-
-fun parseStudent(data: Document): Student {
-    return Student(
-        name = data.select(".user__name").text(),//.split(" ")[0]
-        surname = data.select(".user__name").text(),//.split(" ")[1]
-        jmbag = data.select(".user__email")[0].text(),
-    )
-}
-
-fun parseTrenutnuGodinu(data: Document): Triple<MutableList<Predmet>, String, Pair<Int, Int>> {
-    val table = data.select(".responsive-table").select("tbody").select("tr")
-    val listaPredmeta: MutableList<Predmet> = mutableListOf()
-    var polozeniKrozUpisani = Pair(0, 0)
-    for (tr in table) {
-        listaPredmeta.add(
-            Predmet(
-                tr.select("td[data-title=Naziv predmeta:]").text(),
-                tr.select("td[data-title=Izborna grupa:]").text(),
-                tr.select("td[data-title=Semestar:]").text(),
-                tr.select("td[data-title=Predavanja:]").text(),
-                tr.select("td[data-title=Vježbe:]").text(),
-                tr.select("td[data-title=ECTS upisano:]").text(),
-                tr.select("td[data-title=Polaže se:]").text(),
-                tr.select("td[data-title=Status:]").text(),
-                tr.select("td[data-title=Ocjena:]").text(),
-                tr.select("td[data-title=Datum ispitnog roka:]").text()
-            )
-        )
-        val ocjena = tr.select("td[data-title=Ocjena:]").text()
-        var polozen = 0
-        if (ocjena == "2" || ocjena== "3" || ocjena == "4" || ocjena == "5"){
-            polozen = 1
-        }
-        polozeniKrozUpisani = Pair(
-            first = polozeniKrozUpisani.first + polozen,
-            second = polozeniKrozUpisani.second + 1
-        )
-    }
-    return Triple(listaPredmeta, data.select(".prijavaVrijeme")[0].select("span")[1].text(), polozeniKrozUpisani)
+    return lista
 }

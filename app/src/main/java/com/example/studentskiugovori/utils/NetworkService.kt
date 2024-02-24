@@ -1,5 +1,7 @@
 package com.example.studentskiugovori.utils
 
+import com.example.studentskiugovori.model.dataclasses.Ugovor
+import com.google.gson.Gson
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -7,11 +9,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
-import java.text.Format
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import kotlinx.serialization.json.*
 
 var trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
     override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
@@ -41,14 +43,15 @@ class NetworkService : NetworkServiceInterface {
             .followSslRedirects(false)
             .build()
     }
+
     override var lastTimeLoggedIn = 0L
 
-    var next = ""
-    var simpleID = ""
-    var SC48 = ""
-    var SAMLResponse = ""
-    var simpleAuth = ""
-    var url = ""
+    private var next = ""
+    private var simpleID = ""
+    private var SC48 = ""
+    private var SAMLResponse = ""
+    private var simpleAuth = ""
+    private var url = ""
 
     override fun getSamlRequest(): Result.NetworkCallResult<String> {
 
@@ -78,7 +81,10 @@ class NetworkService : NetworkServiceInterface {
         }
     }
 
-    override fun getSamlResponse(username: String, password: String): Result.NetworkCallResult<String> {
+    override fun getSamlResponse(
+        username: String,
+        password: String
+    ): Result.NetworkCallResult<String> {
 
         val request1_5 = Request.Builder()
             .url(next)
@@ -97,8 +103,8 @@ class NetworkService : NetworkServiceInterface {
         val AuthState = doc1_6.select("input[name=AuthState]").attr("value")
 
         val formBody1_8 = FormBody.Builder()
-            .add("username", "sjurko00@fesb.hr")
-            .add("password", "pepelnica09!")
+            .add("username", username)
+            .add("password", password)
             .add("AuthState", AuthState)
             .add("Submit", "")
             .build()
@@ -118,7 +124,7 @@ class NetworkService : NetworkServiceInterface {
         }
     }
 
-    override fun sendSAMLToISVU(): Result.NetworkCallResult<String> {
+    override fun sendSAMLToWebsc(): Result.NetworkCallResult<String> {
 
         val formBody3 = FormBody.Builder()
             .add("SAMLResponse", SAMLResponse)
@@ -143,28 +149,27 @@ class NetworkService : NetworkServiceInterface {
         }
     }
 
-    override fun getStudomatData(): Result.NetworkCallResult<Document> {
+    override fun loginFully(): Result.NetworkCallResult<String> {
 
         val request5 = Request.Builder()
             .url(url).get()
             .header("Cookie", "$simpleID; $SC48; $simpleAuth")
             .build()
         val response5 = client.newCall(request5).execute()
-        val doc = Jsoup.parse(response5.body?.string())
 
-        return if (response5.code == 200){
+        return if (response5.code == 302) {
             lastTimeLoggedIn = System.currentTimeMillis()
-            Result.NetworkCallResult.Success(doc)
+            Result.NetworkCallResult.Success("Logged in!")
         } else {
             lastTimeLoggedIn = 0L
             Result.NetworkCallResult.Error("Couldn't get ugovori data!")
         }
     }
 
-    override fun getStudomatExamsReg(): Result.NetworkCallResult<Document> {
+    override fun getUgovoriData(): Result.NetworkCallResult<String> {
         val baseUrl = "https://websc.scst.hr:8495/sc/48/ugovor/pregled/0"
         val reqType = "kendogrid"
-        val panelFilter = """{"datumOd":"","datumDo":"","godina":-1,"racun":0,"status":34}"""
+        val panelFilter = """{"datumOd":"","datumDo":"","godina":-1,"racun":0,"status":-2}"""
         val selectedYear = "2023"
         val selectedContract = "22090"
         val take = "999"
@@ -172,26 +177,27 @@ class NetworkService : NetworkServiceInterface {
         val page = "1"
         val pageSize = "999"
         val sortField1 = "RADIODOWEB"
-        val sortDir1 = "asc"
+        val sortDir1 = "desc"
         val sortField2 = "RADIOODWEB"
         val sortDir2 = "desc"
 
-        val url2 = "$baseUrl?reqtype=$reqType&panelFilter=$panelFilter&selValues[GODINA]=$selectedYear" +
-                "&selValues[UGOVOR]=$selectedContract&take=$take&skip=$skip&page=$page" +
-                "&pageSize=$pageSize&sort[0][field]=$sortField1&sort[0][dir]=$sortDir1&sort[1][field]=$sortField2" +
-                "&sort[1][dir]=$sortDir2&filter[logic]=and"
+        val url2 =
+            "$baseUrl?reqtype=$reqType&panelFilter=$panelFilter&selValues[GODINA]=$selectedYear" +
+                    "&selValues[UGOVOR]=$selectedContract&take=$take&skip=$skip&page=$page" +
+                    "&pageSize=$pageSize&sort[0][field]=$sortField1&sort[0][dir]=$sortDir1&sort[1][field]=$sortField2" +
+                    "&sort[1][dir]=$sortDir2&filter[logic]=and"
 
         val request6 = Request.Builder()
             .url(url2)
-            .get().header("X-Requested-With","XMLHttpRequest")
+            .get().header("X-Requested-With", "XMLHttpRequest")
             .header("Cookie", "$simpleID; $SC48; $simpleAuth")
             .build()
 
         val response6 = client.newCall(request6).execute()
-        val doc6 = Jsoup.parse(response6.body?.string())
+        val doc6 = response6.body?.string()
 
-        return if (doc6.toString() != "") {
-            Result.NetworkCallResult.Success(doc6)
+        return if (doc6 != "") {
+            Result.NetworkCallResult.Success(doc6.toString())
         } else {
             lastTimeLoggedIn = 0L
             Result.NetworkCallResult.Error("Couldn't get scst ugovori data!")

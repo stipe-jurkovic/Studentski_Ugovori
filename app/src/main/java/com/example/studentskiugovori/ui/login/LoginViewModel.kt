@@ -28,7 +28,7 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
         _showLoading.postValue(true)
 
         viewModelScope.launch(Dispatchers.IO) {
-            when (repository.loginUser(username, password, true)) {
+            when (repository.getData(username, password, true)) {
                 is Result.LoginResult.Success -> {
                     sharedPreferences.edit().putString("username", username).apply()
                     sharedPreferences.edit().putString("password", password).apply()

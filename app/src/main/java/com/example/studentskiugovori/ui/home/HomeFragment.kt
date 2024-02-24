@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.studentskiugovori.databinding.FragmentHomeBinding
+import com.example.studomatisvu.compose.HomeCompose
 import org.koin.java.KoinJavaComponent
 
 class HomeFragment : Fragment() {
@@ -45,15 +44,10 @@ class HomeFragment : Fragment() {
             )
         }
 
-        //val composeView = binding.composeView
-        homeViewModel.getStudomatData()
+        val composeView = binding.composeView
+        homeViewModel.getData()
 
-        /*composeView.setViewCompositionStrategy(
-            ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
-                viewLifecycleOwner
-            )
-        )*/
-        /*homeViewModel.predmetList.observe(viewLifecycleOwner) {
+        homeViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
                 HomeCompose(homeViewModel)
             }
@@ -62,16 +56,8 @@ class HomeFragment : Fragment() {
                     viewLifecycleOwner
                 )
             )
-        }*/
+        }
 
-        /*homeViewModel.student.observe(viewLifecycleOwner) {
-            if (it != Student()) {
-                activity?.findViewById<TextView>(R.id.textViewIme)?.text = it.name
-                activity?.findViewById<TextView>(R.id.textView)?.text = it.jmbag
-            }
-        }*/
-
-        
         return binding.root
     }
 

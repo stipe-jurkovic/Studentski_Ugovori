@@ -11,9 +11,9 @@ interface NetworkServiceInterface {
 
         fun getSamlResponse(username: String, password: String): Result.NetworkCallResult<String>
 
-        fun sendSAMLToISVU(): Result.NetworkCallResult<String>
+        fun sendSAMLToWebsc(): Result.NetworkCallResult<String>
 
-        fun getStudomatData(): Result.NetworkCallResult<Document>
+        fun loginFully(): Result.NetworkCallResult<String>
 
-        fun getStudomatExamsReg(): Result.NetworkCallResult<Document>
+        fun getUgovoriData(): Result.NetworkCallResult<String>
 }
