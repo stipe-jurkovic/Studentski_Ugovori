@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 class HomeViewModel(private val repository: Repository, context: Context) : ViewModel() {
 
@@ -50,6 +51,9 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
     val ugovori: LiveData<List<Ugovor>> = _ugovori
 
     fun getData(refresh: Boolean = false) {
+        if (refresh) {
+            _isRefreshing.postValue(true)
+        }
         _loadedTxt.postValue("fetching")
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = repository.getData(
@@ -58,7 +62,7 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
                 false
             )) {
                 is Result.LoginResult.Success -> {
-                    val rn = SimpleDateFormat("HH:mm:SS dd.MM.yyyy").format(System.currentTimeMillis())
+                    val rn = SimpleDateFormat("HH:mm:SS dd.MM.yyyy", Locale.getDefault()).format(System.currentTimeMillis())
                     _generated.postValue(rn)
                     _ugovori.postValue(result.data as List<Ugovor>?)
                     _isRefreshing.postValue(false)
@@ -69,6 +73,7 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
 
                 is Result.LoginResult.Error -> {
                     snackbarHostState.showSnackbar("Greška prilikom dohvaćanja podataka")
+                    _isRefreshing.postValue(false)
                     _loadedTxt.postValue("fetchingError")
                     return@launch
                 }
