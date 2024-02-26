@@ -1,8 +1,6 @@
 package com.example.studentskiugovori.utils
 
 
-import org.jsoup.nodes.Document
-
 interface NetworkServiceInterface {
 
         val lastTimeLoggedIn: Long
