@@ -7,6 +7,8 @@ interface NetworkServiceInterface {
 
         val lastTimeLoggedIn: Long
 
+        fun resetLastTimeLoggedIn()
+
         fun getSamlRequest(): Result.NetworkCallResult<String>
 
         fun getSamlResponse(username: String, password: String): Result.NetworkCallResult<String>

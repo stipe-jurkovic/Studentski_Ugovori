@@ -40,6 +40,7 @@ class Repository(private val networkService: NetworkServiceInterface) {
                 is Result.NetworkCallResult.Error -> Result.LoginResult.Error("Error getting data:${result.error}")
             }
         } catch (e: Exception) {
+            networkService.resetLastTimeLoggedIn()
             return Result.LoginResult.Error("Error: ${e.message}")
         }
     }

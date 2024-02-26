@@ -19,10 +19,10 @@ fun parseUgovore(data: String): List<Ugovor> {
                 ugovoriData.rows.POSAONAZIV[i],
                 ugovoriData.rows.NETO[i],
                 ugovoriData.rows.ISPLATANETO[i],
-                ugovoriData.rows.ISPLATA[i],
+                ugovoriData.rows.ISPLATA[i].toString().dropLast(9),
                 ugovoriData.rows.VALUTAUNOS[i],
-                ugovoriData.rows.RADIOODWEB[i],
-                ugovoriData.rows.RADIODOWEB[i],
+                ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9),
+                ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9),
                 ugovoriData.rows.CIJENAWEB[i],
                 ugovoriData.rows.JM[i],
                 ugovoriData.rows.MJESTOOBAVLJANJA[i],
@@ -30,7 +30,7 @@ fun parseUgovore(data: String): List<Ugovor> {
                 ugovoriData.rows.UPUCENWEB[i],
                 ugovoriData.rows.RAD[i],
                 ugovoriData.rows.RACUN[i],
-                ugovoriData.rows.DATUMRACUNA[i]
+                ugovoriData.rows.DATUMRACUNA[i].toString().dropLast(9)
             )
         )
     }

@@ -62,7 +62,7 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
                 false
             )) {
                 is Result.LoginResult.Success -> {
-                    val rn = SimpleDateFormat("HH:mm:SS dd.MM.yyyy", Locale.getDefault()).format(System.currentTimeMillis())
+                    val rn = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault()).format(System.currentTimeMillis())
                     _generated.postValue(rn)
                     _ugovori.postValue(result.data as List<Ugovor>?)
                     _isRefreshing.postValue(false)

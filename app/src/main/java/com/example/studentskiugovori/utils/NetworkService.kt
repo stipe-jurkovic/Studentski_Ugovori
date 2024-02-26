@@ -1,19 +1,15 @@
 package com.example.studentskiugovori.utils
 
-import com.example.studentskiugovori.model.dataclasses.Ugovor
-import com.google.gson.Gson
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import kotlinx.serialization.json.*
 
 var trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
     override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
@@ -28,7 +24,7 @@ var trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
 
 class NetworkService : NetworkServiceInterface {
 
-    lateinit var client: OkHttpClient
+    private var client: OkHttpClient
 
     init {
         val sslContext = SSLContext.getInstance("SSL")
@@ -45,13 +41,16 @@ class NetworkService : NetworkServiceInterface {
     }
 
     override var lastTimeLoggedIn = 0L
-
-    private var next = ""
-    private var simpleID = ""
-    private var SC48 = ""
     private var SAMLResponse = ""
     private var simpleAuth = ""
+    private var simpleID = ""
+    private var SC48 = ""
+    private var next = ""
     private var url = ""
+
+    override fun resetLastTimeLoggedIn() {
+        lastTimeLoggedIn = 0L
+    }
 
     override fun getSamlRequest(): Result.NetworkCallResult<String> {
 
@@ -72,7 +71,7 @@ class NetworkService : NetworkServiceInterface {
                 }
             }
         }
-        next = response.header("Location")!!
+        next = response.header("Location").toString()
         return if (simpleID != "" && SC48 != "") {
             Result.NetworkCallResult.Success("SAMLRequest got!")
         } else {
@@ -86,36 +85,38 @@ class NetworkService : NetworkServiceInterface {
         password: String
     ): Result.NetworkCallResult<String> {
 
-        val request1_5 = Request.Builder()
+        val request1 = Request.Builder()
             .url(next)
             .get()
             .build()
 
-        val response1_5 = client.newCall(request1_5).execute()
-        val ssoID = response1_5.headers["Set-Cookie"]!!.split(";")[0]
+        val response1 = client.newCall(request1).execute()
+        val ssoID = response1.headers["Set-Cookie"]?.split(";")?.get(0) ?: ""
 
-        val request1_6 = Request.Builder()
-            .url(response1_5.headers["Location"]!!)
+        val url = response1.headers["Location"]
+
+        val request2 = Request.Builder()
+            .url(url.toString())
             .get().header("Cookie", ssoID)
             .build()
-        val response1_6 = client.newCall(request1_6).execute()
-        val doc1_6 = Jsoup.parse(response1_6.body?.string())
-        val AuthState = doc1_6.select("input[name=AuthState]").attr("value")
+        val response2 = client.newCall(request2).execute()
+        val doc2 = response2.body?.string()?.let { Jsoup.parse(it) }
+        val authState = doc2?.select("input[name=AuthState]")?.attr("value") ?:""
 
-        val formBody1_8 = FormBody.Builder()
+        val formBody3 = FormBody.Builder()
             .add("username", username)
             .add("password", password)
-            .add("AuthState", AuthState)
+            .add("AuthState", authState )
             .add("Submit", "")
             .build()
-        val request1_8 = Request.Builder()
+        val request3 = Request.Builder()
             .url("https://login.aaiedu.hr/sso/module.php/core/loginuserpass.php?")
-            .post(formBody1_8).header("Cookie", ssoID)
+            .post(formBody3).header("Cookie", ssoID)
             .build()
 
-        val response1_8 = client.newCall(request1_8).execute()
-        val doc1_8 = Jsoup.parse(response1_8.body?.string())
-        SAMLResponse = doc1_8.select("input[name=SAMLResponse]").attr("value")
+        val response3 = client.newCall(request3).execute()
+        val doc3 = response3.body?.string()?.let { Jsoup.parse(it) }
+        SAMLResponse = doc3?.select("input[name=SAMLResponse]")?.attr("value").toString()
         return if (SAMLResponse != "") {
             Result.NetworkCallResult.Success("SAMLResponse got!")
         } else {
@@ -126,20 +127,20 @@ class NetworkService : NetworkServiceInterface {
 
     override fun sendSAMLToWebsc(): Result.NetworkCallResult<String> {
 
-        val formBody3 = FormBody.Builder()
+        val formBody4 = FormBody.Builder()
             .add("SAMLResponse", SAMLResponse)
             .build()
 
-        val request3 = Request.Builder()
+        val request4 = Request.Builder()
             .url("https://websc.scst.hr/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp")
-            .post(formBody3).header("Cookie", simpleID)
+            .post(formBody4).header("Cookie", simpleID)
             .build()
 
-        val response3 = client.newCall(request3).execute()
-        val doc3 = Jsoup.parse(response3.body?.string())
-        simpleAuth = response3.headers["Set-Cookie"]!!.split(";")[0]
+        val response4 = client.newCall(request4).execute()
+        val doc4 = response4.body?.string()?.let { Jsoup.parse(it) }
 
-        url = doc3.select("a[id=redirlink]").attr("href")
+        simpleAuth = response4.headers["Set-Cookie"]?.split(";")?.get(0) ?: ""
+        url = doc4?.select("a[id=redirlink]")?.attr("href").toString()
 
         return if (simpleAuth != "") {
             Result.NetworkCallResult.Success("SAMLResponse sent to scst!")
