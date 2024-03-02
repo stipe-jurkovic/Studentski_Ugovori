@@ -101,7 +101,9 @@ class NetworkService : NetworkServiceInterface {
             .build()
         val response2 = client.newCall(request2).execute()
         val doc2 = response2.body?.string()?.let { Jsoup.parse(it) }
-        val authState = doc2?.select("input[name=AuthState]")?.attr("value") ?:""
+        //val authState = doc2?.select("input[name=AuthState]")?.attr("value") ?:""
+        val loginLink = doc2?.select("form.login-form")?.attr("action").toString()
+        val authState = loginLink.split("AuthState=")[1]
 
         val formBody3 = FormBody.Builder()
             .add("username", username)
@@ -110,7 +112,7 @@ class NetworkService : NetworkServiceInterface {
             .add("Submit", "")
             .build()
         val request3 = Request.Builder()
-            .url("https://login.aaiedu.hr/sso/module.php/core/loginuserpass.php?")
+            .url(url.toString())
             .post(formBody3).header("Cookie", ssoID)
             .build()
 
