@@ -29,8 +29,6 @@ class HomeFragment : Fragment() {
         val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        /*val policy = StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);*/
 
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 

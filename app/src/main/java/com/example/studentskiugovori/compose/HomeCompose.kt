@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -21,10 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.studentskiugovori.compose.CardCompose
 import com.example.studentskiugovori.compose.CircularIndicator
 import com.example.studentskiugovori.model.dataclasses.CardData
+import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.ui.home.HomeViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -78,11 +81,34 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
                                 Modifier.padding(8.dp, 4.dp)
                             )
                         }
-                        ugovori.forEach {
-                            //if (it.STATUSNAZIV?.contains("Izdan") == true) {
-                            UgovorCompose(ugovor = it)
-
+                        Divider( modifier = Modifier.padding(8.dp, 4.dp))
+                        Row {
+                            Text(
+                                text = "Izdani ugovori: ",
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(8.dp, 4.dp)
+                            )
                         }
+                        ugovori.forEach {
+                            if (it.STATUSNAZIV?.contains("Izdan") == true) {
+                            UgovorCompose(ugovor = it)
+                            }
+                        }
+                        Row {
+                            Text(
+                                text = "Zadnji isplaćeni ugovor: ",
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(8.dp, 4.dp)
+                            )
+                        }
+                        val newestPaid = remember {
+                            ugovori.filter { it.STATUSNAZIV?.contains("Ispl") == true }[0]
+                        }
+                        if (newestPaid.STATUSNAZIV?.contains("Ispl") == true)
+                        {
+                            UgovorCompose(ugovor = newestPaid)
+                        }
+
                     }
                 }
             }
