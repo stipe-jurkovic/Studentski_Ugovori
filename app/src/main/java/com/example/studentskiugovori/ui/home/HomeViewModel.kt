@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.studentskiugovori.model.Repository
+import com.example.studentskiugovori.model.data.calculateEarningsAndGetNumbers
+import com.example.studentskiugovori.model.dataclasses.CardData
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.utils.Result
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +52,9 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
     private val _ugovori = MutableLiveData<List<Ugovor>>().apply { value = emptyList() }
     val ugovori: LiveData<List<Ugovor>> = _ugovori
 
+    val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
+    val cardData: LiveData<CardData> = _cardData
+
     fun getData(refresh: Boolean = false) {
         if (refresh) {
             _isRefreshing.postValue(true)
@@ -69,6 +74,7 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
                     _loadedTxt.postValue("fetched")
                     delay(30)
                     _loadedTxt.postValue("fetchedNew")
+                    _cardData.postValue(calculateEarningsAndGetNumbers(result.data))
                 }
 
                 is Result.LoginResult.Error -> {

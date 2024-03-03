@@ -1,10 +1,10 @@
-package com.example.studentskiugovori.ui.dashboard
+package com.example.studentskiugovori.ui.fulllist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class FullListViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"

@@ -223,11 +223,13 @@ fun UgovorComposeMini(ugovor: Ugovor) {
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
+            if(ugovor.ISPLATA !=""){
             UgovorText(
                 "Neto (Isplata neto): ",
                 (ugovor.NETO.toString() ?: "") + " (" + (ugovor.ISPLATANETO.toString() ?: "") + ")" + " " + ugovor.VALUTAUNOS
             )
-            UgovorText("Datum isplate: ", ugovor.ISPLATA ?: "")
+                UgovorText("Datum isplate: ", ugovor.ISPLATA ?: "")
+            }
 
         }
     }
