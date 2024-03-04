@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.studentskiugovori"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -94,6 +94,9 @@ dependencies {
     // json
     implementation("com.google.code.gson:gson:2.10")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+    // The compose calendar library
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
 
 
 }
