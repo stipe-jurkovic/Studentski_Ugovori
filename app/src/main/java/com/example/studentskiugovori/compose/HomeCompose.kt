@@ -1,18 +1,19 @@
 package com.example.studomatisvu.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -21,13 +22,14 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.studentskiugovori.R
 import com.example.studentskiugovori.compose.CardCompose
 import com.example.studentskiugovori.compose.CircularIndicator
 import com.example.studentskiugovori.model.dataclasses.CardData
-import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.ui.home.HomeViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -48,6 +50,7 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
         Modifier
             .pullRefresh(it)
             .padding(0.dp)
+            .background(color = colorResource(id = R.color.md_theme_background))
     }?.let { it ->
         Scaffold(
             modifier = it,
@@ -61,8 +64,9 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
             Box(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .wrapContentHeight()
-                    .padding(innerPadding),
+                    .padding(innerPadding)
+                    .background(color = colorResource(id = R.color.md_theme_background))
+                    .fillMaxSize(),
             ) {
                 if (!ugovori.isNullOrEmpty()) {
                     PullRefreshIndicator(
@@ -81,7 +85,7 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
                                 Modifier.padding(8.dp, 4.dp)
                             )
                         }
-                        Divider( modifier = Modifier.padding(8.dp, 4.dp))
+                        HorizontalDivider(modifier = Modifier.padding(8.dp, 4.dp))
                         Row {
                             Text(
                                 text = "Izdani ugovori: ",
@@ -91,7 +95,7 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
                         }
                         ugovori.forEach {
                             if (it.STATUSNAZIV?.contains("Izdan") == true) {
-                            UgovorCompose(ugovor = it)
+                                UgovorCompose(ugovor = it)
                             }
                         }
                         Row {
@@ -104,8 +108,7 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
                         val newestPaid = remember {
                             ugovori.filter { it.STATUSNAZIV?.contains("Ispl") == true }[0]
                         }
-                        if (newestPaid.STATUSNAZIV?.contains("Ispl") == true)
-                        {
+                        if (newestPaid.STATUSNAZIV?.contains("Ispl") == true) {
                             UgovorCompose(ugovor = newestPaid)
                         }
 
@@ -114,6 +117,7 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
             }
         }
     }
+
 }
 
 

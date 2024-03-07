@@ -27,10 +27,7 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -89,7 +86,7 @@ dependencies {
     implementation("androidx.security:security-crypto:1.0.0")
 
     //pull to refresh compose
-    implementation("androidx.compose.material:material:1.6.1")
+    implementation("androidx.compose.material:material:1.6.3")
 
     // json
     implementation("com.google.code.gson:gson:2.10")

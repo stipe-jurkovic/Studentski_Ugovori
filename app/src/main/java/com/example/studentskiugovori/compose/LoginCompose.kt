@@ -66,7 +66,7 @@ fun LoginCompose(
 
     val modifier = Modifier
         //.clip(RoundedCornerShape(10.dp))
-        .background(Color.White)
+        .background(colorResource(id = R.color.md_theme_onPrimary))
     var passwordVisibility by remember { mutableStateOf(false) }
     val icon = painterResource(
         id = if (passwordVisibility)
@@ -87,13 +87,12 @@ fun LoginCompose(
             modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize()
-                .background(colorResource(id = R.color.white))
+                .background(colorResource(id = R.color.md_theme_onPrimary))
         ) {
             Icon(
                 painter = adaptiveIconPainterResource(R.mipmap.ic_launcher),
                 contentDescription = "icon",
-                modifier = Modifier.background(Color.White),
-                tint = Color.Unspecified
+                modifier = Modifier.background(colorResource(id = R.color.md_theme_onPrimary)),
             )
             Spacer(modifier = Modifier.height(32.dp))
             Column {
@@ -133,8 +132,8 @@ fun LoginCompose(
             if (loginViewModel.showLoading.observeAsState().value == true) {
                 CircularProgressIndicator(
                     modifier = Modifier.width(40.dp),
-                    color = colorResource(id = R.color.StudomatBlue),
-                    trackColor = colorResource(id = R.color.StudomatBlueLite),
+                    color = colorResource(id = R.color.md_theme_secondary),
+                    trackColor = colorResource(id = R.color.md_theme_secondary),
                     strokeWidth = 4.dp,
                     strokeCap = StrokeCap.Round
                 )
@@ -143,7 +142,7 @@ fun LoginCompose(
                     onClick = {
                         loginViewModel.attemptLogin(textEmail, textPass, sheredPrefs)
                     },
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.StudomatBlue))
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.md_theme_secondary))
                 ) {
                     Text(text = "Prijava")
                 }

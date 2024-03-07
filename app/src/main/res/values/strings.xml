@@ -2,5 +2,5 @@
     <string name="app_name">Studentski Ugovori</string>
     <string name="title_home">Home</string>
     <string name="title_full_list">Svi ugovori</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_izracun">Izračun</string>
 </resources>

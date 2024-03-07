@@ -119,7 +119,7 @@ fun UgovorPreview() {
 @Composable
 fun UgovorCompose(ugovor: Ugovor) {
     var showFull : Boolean by remember { mutableStateOf (false) }
-    val shadow = Shadow(colorResource(id = R.color.black), Offset(3F, 3F), blurRadius = 10F)
+    val shadow = Shadow(colorResource(id = R.color.md_theme_scrim), Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
     val modifier = Modifier
@@ -139,7 +139,7 @@ fun UgovorCompose(ugovor: Ugovor) {
 @Composable
 fun UgovorComposeFull(ugovor: Ugovor) {
 
-    val shadow = Shadow(colorResource(id = R.color.black), Offset(3F, 3F), blurRadius = 10F)
+    val shadow = Shadow(colorResource(id = R.color.md_theme_scrim), Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
     Column(
@@ -151,7 +151,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
     ) {
         Column(
             Modifier
-                .background(color = colorResource(id = R.color.StudomatBlue))
+                .background(color = colorResource(id = R.color.md_theme_secondary))
                 .zIndex(0F)
                 .wrapContentHeight()
                 .padding(4.dp, 2.dp, 4.dp, 2.dp)
@@ -161,7 +161,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
         }
         Column(
             Modifier
-                .background(color = colorResource(id = R.color.white))
+                .background(colorResource(id = R.color.md_theme_background))
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
@@ -196,7 +196,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
 @Composable
 fun UgovorComposeMini(ugovor: Ugovor) {
 
-    val shadow = Shadow(colorResource(id = R.color.black), Offset(3F, 3F), blurRadius = 10F)
+    val shadow = Shadow(colorResource(id = R.color.md_theme_scrim), Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
     Column(
@@ -208,7 +208,7 @@ fun UgovorComposeMini(ugovor: Ugovor) {
     ) {
         Column(
             Modifier
-                .background(color = colorResource(id = R.color.StudomatBlue))
+                .background(color = colorResource(id = R.color.md_theme_secondary))
                 .zIndex(0F)
                 .wrapContentHeight()
                 .padding(4.dp, 2.dp, 4.dp, 2.dp)
@@ -219,7 +219,7 @@ fun UgovorComposeMini(ugovor: Ugovor) {
         }
         Column(
             Modifier
-                .background(color = colorResource(id = R.color.white))
+                .background(colorResource(id = R.color.md_theme_background))
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
@@ -241,10 +241,10 @@ fun UgovorText(text: String = "", value: String = "") {
         Modifier
             .wrapContentWidth()
             .wrapContentHeight()
-    var textColor = colorResource(id = R.color.black)
+    var textColor = colorResource(id = R.color.md_theme_onBackground)
 
     if (text.contains("Poslodavac:")) {
-        textColor = colorResource(id = R.color.white)
+        textColor = colorResource(id = R.color.md_theme_onBackground)
     }
     var modifierValue = modifier
     val textColorValue = textColor

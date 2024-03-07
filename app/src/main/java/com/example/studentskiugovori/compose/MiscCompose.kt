@@ -34,15 +34,15 @@ fun CircularIndicator() {
         Box(
             Modifier
                 .clip(shape = CircleShape)
-                .background(colorResource(id = R.color.white))
+                .background(colorResource(id = R.color.md_theme_onPrimary))
                 .padding(16.dp, 16.dp, 16.dp, 16.dp)
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .width(64.dp)
                     .height(64.dp),
-                color = colorResource(id = R.color.StudomatBlue),
-                trackColor = colorResource(id = R.color.StudomatBlueLite),
+                color = colorResource(id = R.color.md_theme_secondary),
+                trackColor = colorResource(id = R.color.md_theme_secondary),
                 strokeWidth = 4.dp,
                 strokeCap = StrokeCap.Round
             )

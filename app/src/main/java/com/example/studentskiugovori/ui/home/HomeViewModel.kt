@@ -1,38 +1,32 @@
 package com.example.studentskiugovori.ui.home
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.studentskiugovori.model.Repository
 import com.example.studentskiugovori.model.data.calculateEarningsAndGetNumbers
 import com.example.studentskiugovori.model.dataclasses.CardData
+import com.example.studentskiugovori.model.dataclasses.DayWorked
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.utils.Result
+import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class HomeViewModel(private val repository: Repository, context: Context) : ViewModel() {
 
 
-    private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+    val sharedPref : SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
 
-    private val sharedPref = context.let {
-        EncryptedSharedPreferences.create(
-            "PreferencesFilename",
-            masterKeyAlias,
-            it,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    }
 
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
 
@@ -54,6 +48,9 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
 
     val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
     val cardData: LiveData<CardData> = _cardData
+
+    val _daysWorked = MutableLiveData<MutableList<Pair<CalendarDay, DayWorked>>>().apply { value = mutableListOf() }
+    val daysWorked: MutableLiveData<MutableList<Pair<CalendarDay, DayWorked>>> = _daysWorked
 
     fun getData(refresh: Boolean = false) {
         if (refresh) {
@@ -88,5 +85,10 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
                 }
             }
         }
+    }
+    fun addDayWorked(day: CalendarDay, dayWorked: DayWorked) {
+        val list = _daysWorked.value
+        list?.add(Pair(day, dayWorked))
+        _daysWorked.postValue(list)
     }
 }

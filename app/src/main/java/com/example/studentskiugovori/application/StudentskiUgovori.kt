@@ -18,27 +18,5 @@ class StudentskiUgovori : Application() {
             androidContext(this@StudentskiUgovori)
             modules(appModule)
         }
-        /*val sharedPref = getSharedPreferences("MySharedPref", MODE_PRIVATE)
-        val username = sharedPref.getString("username", "") ?: ""
-        val password = sharedPref.getString("password", "") ?: ""
-        if (username == "" || password == "") {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-        else{
-            startActivity(Intent(this, MainActivity::class.java))
-        }*/
-    }
-
-    fun createSharedPreferences(): SharedPreferences {
-
-        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-
-        return EncryptedSharedPreferences.create(
-            "PreferencesFilename",
-            masterKeyAlias,
-            applicationContext,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
     }
 }
