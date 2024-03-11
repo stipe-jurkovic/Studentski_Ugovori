@@ -60,19 +60,6 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 @Preview
 @Composable
 fun ThemeCalcCompose() {
-    AppTheme {
-        CalcCompose()
-    }
-}
-
-
-@Composable
-fun CalcCompose(): CalendarDay? {
-    val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
-    val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
-    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
-    var selection by remember { mutableStateOf<CalendarDay?>(null) }
     var datemoney by remember { mutableStateOf(mapOf<LocalDate, Float>()) }
 
     val mutabledatemoney = datemoney.toMutableMap()
@@ -81,6 +68,20 @@ fun CalcCompose(): CalendarDay? {
     mutabledatemoney[LocalDate.now().plusDays(12)] = 30.0f
     mutabledatemoney[LocalDate.now().plusDays(3)] = 40.0f
     datemoney = mutabledatemoney
+    AppTheme {
+        CalcCompose(datemoney = datemoney)
+    }
+}
+
+
+@Composable
+fun CalcCompose( datemoney: Map<LocalDate, Float>): CalendarDay? {
+    val currentMonth = remember { YearMonth.now() }
+    val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
+    val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
+    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
+    var selection by remember { mutableStateOf<CalendarDay?>(null) }
+    //var datemoney by remember { mutableStateOf(mapOf<LocalDate, Float>()) }
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -172,7 +173,7 @@ fun Day(
         ) {
             Text(text = day.date.dayOfMonth.toString(), color = textColor)
             val money = dateMoney[day.date]
-            val text = if (money != null) { money.toString() + "€" }
+            val text = if (money != null) { String.format( "%.2f", money) + "€" }
             else { "" }
             when (day.position) {
                 DayPosition.MonthDate -> Text(text = text)

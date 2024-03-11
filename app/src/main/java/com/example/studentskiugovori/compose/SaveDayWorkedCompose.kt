@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.math.round
 
 @Preview
 @Composable
@@ -109,8 +110,10 @@ fun CalcWholeCompose() {
                                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                                         if (!sheetState.isVisible) {
                                             showBottomSheet = false
-                                            if (selection != null){
-                                                datemoney[selection!!.date] = 5.0f
+                                            if (selection != null) {
+                                                datemoney[selection!!.date] =
+                                                    ((timePickerStateEnd.hour + timePickerStateEnd.minute / 60 - timePickerStateStart.hour - timePickerStateStart.minute / 60) * 5.3f)
+
                                             }
                                         }
                                     }
@@ -125,7 +128,7 @@ fun CalcWholeCompose() {
             sheetPeekHeight = 0.dp,
         ) {
             Column {
-                selection = CalcCompose()
+                selection = CalcCompose(datemoney)
                 Column {
                     Text("Ukupna zarada: ")
                     Text("Ukupna zarada ovaj tjedan: ")
