@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import com.example.studentskiugovori.compose.AppTheme
 import com.example.studentskiugovori.compose.CalcCompose
+import com.example.studentskiugovori.compose.CalcWholeCompose
 import com.example.studentskiugovori.databinding.FragmentCalculationBinding
 import com.example.studentskiugovori.ui.home.HomeViewModel
 import org.koin.java.KoinJavaComponent
@@ -34,7 +36,7 @@ class CalculationFragment : Fragment() {
 
         homeViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
-                CalcCompose()
+                AppTheme(){ CalcWholeCompose() }
             }
             composeView.setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(

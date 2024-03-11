@@ -7,12 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.security.crypto.MasterKeys
+import com.example.studentskiugovori.compose.AppTheme
 import com.example.studentskiugovori.compose.FullListCompose
 import com.example.studentskiugovori.databinding.FragmentFulllistBinding
 import com.example.studentskiugovori.ui.home.HomeViewModel
-import com.example.studomatisvu.compose.HomeCompose
 import org.koin.java.KoinJavaComponent
 
 class FullListFragment : Fragment() {
@@ -42,7 +40,7 @@ class FullListFragment : Fragment() {
 
         homeViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
-                FullListCompose(homeViewModel)
+                AppTheme(){ FullListCompose(homeViewModel) }
             }
             composeView.setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(

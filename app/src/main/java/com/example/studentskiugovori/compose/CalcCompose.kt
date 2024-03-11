@@ -7,9 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,23 +22,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.studentskiugovori.R
 import com.example.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
 import com.example.studentskiugovori.compose.calendarcompose.clickable
 import com.example.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -58,13 +59,28 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 
 @Preview
 @Composable
-fun CalcCompose() {
+fun ThemeCalcCompose() {
+    AppTheme {
+        CalcCompose()
+    }
+}
+
+
+@Composable
+fun CalcCompose(): CalendarDay? {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
+    var datemoney by remember { mutableStateOf(mapOf<LocalDate, Float>()) }
 
+    val mutabledatemoney = datemoney.toMutableMap()
+    mutabledatemoney[LocalDate.now()] = 10.0f
+    mutabledatemoney[LocalDate.now().plusDays(8)] = 20.0f
+    mutabledatemoney[LocalDate.now().plusDays(12)] = 30.0f
+    mutabledatemoney[LocalDate.now().plusDays(3)] = 40.0f
+    datemoney = mutabledatemoney
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -75,14 +91,13 @@ fun CalcCompose() {
     val daysOfWeek = daysOfWeek() // Available in the library
     val coroutineScope = rememberCoroutineScope()
     val visibleMonth = rememberFirstCompletelyVisibleMonth(state)
-    LaunchedEffect(visibleMonth) {
-        // Clear selection if we scroll to a new month.
-        selection = null
-    }
-    Column {
+    LaunchedEffect(visibleMonth) { selection = null }// Clear selection if we scroll to a new month.
+    Column(
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxWidth()) {
         SimpleCalendarTitle(
             modifier = Modifier
-                .background(color = colorResource(R.color.md_theme_onPrimary))
+                .background(color = MaterialTheme.colorScheme.tertiaryContainer)
                 .padding(horizontal = 8.dp, vertical = 12.dp),
             currentMonth = visibleMonth.yearMonth,
             goToPrevious = {
@@ -99,12 +114,14 @@ fun CalcCompose() {
         HorizontalCalendar(
             state = state,
             dayContent = { day ->
-                Day(day, isSelected = selection == day){clicked ->
-                    if(clicked == selection)
-                    { selection = null }
-                    else
-                    { selection = clicked }
-                } },
+                Day(day, isSelected = selection == day, dateMoney = datemoney) { clicked ->
+                    if (clicked == selection) {
+                        selection = null
+                    } else {
+                        selection = clicked
+                    }
+                }
+            },
             userScrollEnabled = false,
             monthHeader = {
                 DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
@@ -118,6 +135,7 @@ fun CalcCompose() {
             }
         }*/
     }
+    return selection
 
 }
 
@@ -126,9 +144,15 @@ fun Day(
     day: CalendarDay,
     isSelected: Boolean = false,
     colors: List<Color> = emptyList(),
+    dateMoney: Map<LocalDate, Float>,
     onClick: (CalendarDay) -> Unit = {},
 ) {
-    val selectedItemColor = colorResource(id = R.color.md_theme_secondary)
+    val selectedItemColor = MaterialTheme.colorScheme.secondary
+    val inActiveTextColor = Color.Gray
+    val textColor = when (day.position) {
+        DayPosition.MonthDate -> Color.Unspecified
+        DayPosition.InDate, DayPosition.OutDate -> inActiveTextColor
+    }
     Box(
         modifier = Modifier
             .aspectRatio(1f)  // This is important for square sizing!
@@ -137,6 +161,7 @@ fun Day(
                 width = if (isSelected) 1.dp else 0.dp,
                 color = if (isSelected) selectedItemColor else Color.Transparent,
             )
+            .background(color = MaterialTheme.colorScheme.tertiaryContainer)
             .clickable { onClick(day) },
         contentAlignment = Alignment.Center
     ) {
@@ -145,8 +170,15 @@ fun Day(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Text(text = day.date.dayOfMonth.toString())
-            Text(text = "5€")
+            Text(text = day.date.dayOfMonth.toString(), color = textColor)
+            val money = dateMoney[day.date]
+            val text = if (money != null) { money.toString() + "€" }
+            else { "" }
+            when (day.position) {
+                DayPosition.MonthDate -> Text(text = text)
+                else-> Text(text = "")
+            }
+
         }
     }
 }

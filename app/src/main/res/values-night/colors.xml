@@ -5,11 +5,11 @@
     <color name="md_theme_onPrimary">#003063</color>
     <color name="md_theme_primaryContainer">#00468C</color>
     <color name="md_theme_onPrimaryContainer">#D6E3FF</color>
-    <color name="md_theme_secondary">#71D2FF</color>
-    <color name="md_theme_onSecondary">#003547</color>
-    <color name="md_theme_secondaryContainer">#004D66</color>
-    <color name="md_theme_onSecondaryContainer">#C0E8FF</color>
-    <color name="md_theme_tertiary">#71D2FF</color>
+    <color name="md_theme_secondary">#ACC7FF</color>
+    <color name="md_theme_onSecondary">#002F67</color>
+    <color name="md_theme_secondaryContainer">#09458E</color>
+    <color name="md_theme_onSecondaryContainer">#D7E2FF</color>
+    <color name="md_theme_tertiary">#70D2FF</color>
     <color name="md_theme_onTertiary">#003547</color>
     <color name="md_theme_tertiaryContainer">#004D66</color>
     <color name="md_theme_onTertiaryContainer">#C0E8FF</color>

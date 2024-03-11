@@ -4,11 +4,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.security.crypto.MasterKeys
+import com.example.studentskiugovori.compose.AppTheme
 import com.example.studentskiugovori.MainActivity
 import com.example.studentskiugovori.compose.LoginCompose
 import com.example.studentskiugovori.databinding.ActivityLoginBinding
-import org.koin.java.KoinJavaComponent
 import org.koin.java.KoinJavaComponent.inject
 
 
@@ -28,11 +27,13 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         val snackbarHostState = loginViewModel.snackbarHostState
         binding.composeViewLogin.setContent {
-            LoginCompose(
-                loginViewModel,
-                sharedPref,
-                snackbarHostState
-            )
+            AppTheme(){
+                LoginCompose(
+                    loginViewModel,
+                    sharedPref,
+                    snackbarHostState
+                )
+            }
         }
         loginViewModel.loginSuccess.observe(this) {
             if (it) {

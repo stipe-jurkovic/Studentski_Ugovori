@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.studentskiugovori.R
+import com.example.studentskiugovori.compose.AppTheme
+import com.example.studentskiugovori.compose.md_theme_dark_onPrimaryContainer
+import com.example.studentskiugovori.compose.md_theme_dark_onSecondary
 import com.example.studentskiugovori.model.dataclasses.Ugovor
+import com.google.android.material.color.MaterialColors
 
 @Preview
 @Composable
@@ -61,7 +66,9 @@ fun UgovorPreview() {
         )
     )*/
     var showFull : Boolean by remember { mutableStateOf (false) }
-    Card(onClick = { showFull = !showFull }, modifier = Modifier.padding(0.dp).zIndex(3f)) {
+    Card(onClick = { showFull = !showFull }, modifier = Modifier
+        .padding(0.dp)
+        .zIndex(3f)) {
         if (showFull) {
             UgovorComposeFull(
                 ugovor = Ugovor(
@@ -123,10 +130,10 @@ fun UgovorCompose(ugovor: Ugovor) {
     val shape = RoundedCornerShape(8.dp)
 
     val modifier = Modifier
-            .padding(8.dp)
-            .wrapContentHeight()
-            .shadow(elevation = 4.dp, shape = shape)
-            .clip(shape)
+        .padding(8.dp)
+        .wrapContentHeight()
+        .shadow(elevation = 4.dp, shape = shape)
+        .clip(shape)
     Card(onClick = { showFull = !showFull }, modifier = modifier) {
         if (showFull) {
             UgovorComposeFull(ugovor)
@@ -244,7 +251,7 @@ fun UgovorText(text: String = "", value: String = "") {
     var textColor = colorResource(id = R.color.md_theme_onBackground)
 
     if (text.contains("Poslodavac:")) {
-        textColor = colorResource(id = R.color.md_theme_onBackground)
+        textColor = MaterialTheme.colorScheme.onSecondary
     }
     var modifierValue = modifier
     val textColorValue = textColor
@@ -255,7 +262,6 @@ fun UgovorText(text: String = "", value: String = "") {
         Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        //verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
