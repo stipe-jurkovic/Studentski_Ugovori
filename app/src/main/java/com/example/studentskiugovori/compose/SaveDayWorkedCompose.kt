@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import kotlin.math.round
 
 @Preview
 @Composable
@@ -53,7 +52,7 @@ fun CalcWholeCompose() {
     var showTimePicker by remember { mutableStateOf(false) }
     var startSelected by remember { mutableStateOf(false) }
     var endSelected by remember { mutableStateOf(false) }
-    var datemoney by remember { mutableStateOf(mutableMapOf<LocalDate, Float>()) }
+    val datemoney by remember { mutableStateOf(mutableMapOf<LocalDate, Float>()) }
     val timePickerStateStart = rememberTimePickerState()
     val timePickerStateEnd = rememberTimePickerState()
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
@@ -62,8 +61,8 @@ fun CalcWholeCompose() {
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                text = { Text("Show bottom sheet") },
-                icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                text = { Text("Edit") },
+                icon = { Icon(Icons.Filled.Edit, contentDescription = "") },
                 onClick = {
                     showBottomSheet = true
                 })
@@ -111,14 +110,18 @@ fun CalcWholeCompose() {
                                         if (!sheetState.isVisible) {
                                             showBottomSheet = false
                                             if (selection != null) {
-                                                datemoney[selection!!.date] =
-                                                    ((timePickerStateEnd.hour + timePickerStateEnd.minute / 60 - timePickerStateStart.hour - timePickerStateStart.minute / 60) * 5.3f)
-
+                                                val startTime =
+                                                    timePickerStateEnd.hour + timePickerStateEnd.minute / 60f
+                                                val endTime =
+                                                    timePickerStateStart.hour + timePickerStateStart.minute / 60f
+                                                val selectionDate = selection as CalendarDay
+                                                datemoney[selectionDate.date] =
+                                                    ((startTime - endTime) * 5.3f)
                                             }
                                         }
                                     }
                                 }) {
-                                    Text(text = "Spremi" + datemoney.toString())
+                                    Text(text = "Spremi$datemoney")
                                 }
                             }
                         }
@@ -130,7 +133,7 @@ fun CalcWholeCompose() {
             Column {
                 selection = CalcCompose(datemoney)
                 Column {
-                    Text("Ukupna zarada: ")
+                    Text("Ukupna zarada: " + datemoney.values.sum())
                     Text("Ukupna zarada ovaj tjedan: ")
                     Text("Ukupna predviđena zarada: ")
                 }

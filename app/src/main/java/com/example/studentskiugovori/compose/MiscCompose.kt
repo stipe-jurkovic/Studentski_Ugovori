@@ -42,7 +42,7 @@ fun CircularIndicator() {
                     .width(64.dp)
                     .height(64.dp),
                 color = colorResource(id = R.color.md_theme_secondary),
-                trackColor = colorResource(id = R.color.md_theme_secondary),
+                trackColor = colorResource(id = R.color.md_theme_secondaryContainer),
                 strokeWidth = 4.dp,
                 strokeCap = StrokeCap.Round
             )

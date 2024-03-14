@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version "1.4.21"
+    id("kotlin-kapt")/*
+    id("realm-android")*/
 }
 
 android {
@@ -79,7 +81,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     //compose livedata state
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.3")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     //EncryptedSharedPreferences
@@ -95,5 +97,8 @@ dependencies {
     // The compose calendar library
     implementation("com.kizitonwose.calendar:compose:2.4.0")
 
-
+    /*//realm
+    implementation("io.realm:realm-gradle-plugin:10.10.0")
+    implementation("io.realm:realm-kotlin-extensions:10.10.0")
+    annotationProcessor("io.realm:realm-android:10.10.0")*/
 }

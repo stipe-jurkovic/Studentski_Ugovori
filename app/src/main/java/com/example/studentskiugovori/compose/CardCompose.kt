@@ -54,13 +54,13 @@ fun CardCompose(cardData: CardData = CardData()) {
             {
                 Column() {
                     Text(
-                        text = "Broj izdanih ugovora: " +cardData.numOfIzdanih,
+                        text = "Broj izdanih ugovora: " + cardData.numOfIzdanih,
                         color = Color.White,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(bottom = 3.dp)
                     )
                     Text(
-                        text = "Broj isplaćenih ugovora: " +cardData.numOfPaid,
+                        text = "Broj isplaćenih ugovora: " + cardData.numOfPaid,
                         color = Color.White,
                         fontSize = 20.sp
                     )
