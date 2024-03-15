@@ -1,4 +1,5 @@
-package com.example.studentskiugovori
+
+package com.example.studentskiugovori/*
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.material3.SnackbarHostState
@@ -89,4 +90,4 @@ class MainViewModel (private val repository: Repository, context: Context) : Vie
         list?.add(Pair(day, dayWorked))
         _daysWorked.postValue(list)
     }
-}
+}*/

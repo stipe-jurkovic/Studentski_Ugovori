@@ -1,5 +1,6 @@
 package com.example.studentskiugovori.compose
 
+import android.text.Selection
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,8 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.studentskiugovori.model.data.calculateDayEarning
+import com.example.studentskiugovori.model.dataclasses.DayWorked
+import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
@@ -56,9 +60,9 @@ fun CalcWholeCompose() {
     var startSelected by remember { mutableStateOf(false) }
     var endSelected by remember { mutableStateOf(false) }
     val datemoney by remember { mutableStateOf(mutableMapOf<LocalDate, BigDecimal>()) }
-    val timePickerStateStart = rememberTimePickerState()
-    val timePickerStateEnd = rememberTimePickerState()
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
+    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+
 
 
     Scaffold(
@@ -77,6 +81,9 @@ fun CalcWholeCompose() {
             modifier = Modifier.padding(contentPadding),
             sheetContent = {
                 if (showBottomSheet) {
+                    val daysWorked = homeViewModel.daysWorked.value as Map<CalendarDay, DayWorked>
+                    val timePickerStateStart = rememberTimePickerState(daysWorked[selection]?.timeStart?.hour?: 6, daysWorked[selection]?.timeStart?.minute?: 0)
+                    val timePickerStateEnd = rememberTimePickerState( daysWorked[selection]?.timeEnd?.hour?: 14, daysWorked[selection]?.timeEnd?.minute?: 0)
                     ModalBottomSheet(
                         sheetState = sheetState,
                         onDismissRequest = {
@@ -89,8 +96,8 @@ fun CalcWholeCompose() {
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                TimePickerCompose(timePickerStateStart)
-                                TimePickerCompose(timePickerStateEnd)
+                                TimeInput(timePickerStateStart)
+                                TimeInput(timePickerStateEnd)
                             }
 
                             Row(
@@ -119,10 +126,20 @@ fun CalcWholeCompose() {
                                                 LocalTime.of(timePickerStateEnd.hour, timePickerStateEnd.minute),
                                                 5.3.toBigDecimal()
                                                 )
-                                                if (neto.compareTo(BigDecimal.ZERO) != 0)
+                                                if (neto.compareTo(BigDecimal.ZERO) != 0) {
                                                     datemoney[selectionDate.date] = neto
-                                                else
+                                                }
+                                                else {
                                                     datemoney.remove(selectionDate.date)
+                                                }
+                                                homeViewModel.addDayWorked(selectionDate,
+                                                    DayWorked(
+                                                        selectionDate.date,
+                                                        LocalTime.of(timePickerStateStart.hour, timePickerStateStart.minute),
+                                                        LocalTime.of(timePickerStateEnd.hour, timePickerStateEnd.minute),
+                                                        neto
+                                                    )
+                                                )
                                             }
                                         }
                                     }
@@ -142,106 +159,11 @@ fun CalcWholeCompose() {
                     acc + value
                 }
                 Column {
-                    Text("Ukupna zarada: $sum")
+                    Text("Ukupna zarada: $sum €")
                     Text("Ukupna zarada ovaj tjedan: ")
                     Text("Ukupna predviđena zarada: ")
                 }
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimePickerCompose(
-    timePickerState: TimePickerState,
-    initialHour: Int = 6,
-    initialMinute: Int = 0,
-    is24Hour: Boolean = true
-) {
-    TimeInput(state = timePickerState)
-}
-
-
-@Preview
-@Composable
-fun ThemeTest() {
-    AppTheme {
-        TimePickerCustom()
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimePickerCustom() {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
-    var startSelected by remember { mutableStateOf(false) }
-    var endSelected by remember { mutableStateOf(false) }
-    val timePickerStateStart = rememberTimePickerState()
-
-
-    Column {
-        Row(
-            modifier = Modifier
-                .padding(16.dp, 0.dp, 16.dp, 4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Button(
-                onClick = {
-                    showTimePicker = true
-                    startSelected = true
-                },
-                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 16.dp)
-            ) {
-                Text("Start Time")
-            }
-            Button(
-                onClick = {
-                    showTimePicker = true
-                    endSelected = true
-                },
-                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 16.dp)
-            ) {
-                Text("End Time")
-            }
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            TimePickerCompose(timePickerStateStart)
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier
-                .padding(26.dp, 0.dp, 26.dp, 30.dp)
-                .fillMaxWidth()
-        ) {
-            Button(onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        showBottomSheet = false
-                    }
-                }
-            }) {
-                Text(text = "Odustani")
-            }
-            Button(onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        showBottomSheet = false
-                    }
-                }
-            }) {
-                Text(text = "Spremi")
-            }
-        }
-    }
-
 }

@@ -165,11 +165,15 @@ fun Day(
             verticalArrangement = Arrangement.Top
         ) {
             Text(text = day.date.dayOfMonth.toString(), color = textColor)
-            val money = dateMoney[day.date]
-            val text = if (money != null) { String.format( "%.2f", money) + "€" }
+            var money = dateMoney[day.date]
+            val text = if (money != null) {
+                if (money > BigDecimal(99))
+                { money = money.setScale(1)}
+                money.toString() + "€"
+            }
             else { "" }
             when (day.position) {
-                DayPosition.MonthDate -> Text(text = text)
+                DayPosition.MonthDate -> Text(text = text ?:"")
                 else-> Text(text = "")
             }
 

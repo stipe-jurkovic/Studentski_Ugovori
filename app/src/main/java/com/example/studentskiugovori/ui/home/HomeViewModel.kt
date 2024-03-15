@@ -49,8 +49,8 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
     val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
     val cardData: LiveData<CardData> = _cardData
 
-    val _daysWorked = MutableLiveData<MutableList<Pair<CalendarDay, DayWorked>>>().apply { value = mutableListOf() }
-    val daysWorked: MutableLiveData<MutableList<Pair<CalendarDay, DayWorked>>> = _daysWorked
+    val _daysWorked = MutableLiveData<MutableMap<CalendarDay, DayWorked>>().apply { value = mutableMapOf() }
+    val daysWorked: LiveData<MutableMap<CalendarDay, DayWorked>> = _daysWorked
 
     fun getData(refresh: Boolean = false) {
         if (refresh) {
@@ -87,8 +87,8 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
         }
     }
     fun addDayWorked(day: CalendarDay, dayWorked: DayWorked) {
-        val list = _daysWorked.value
-        list?.add(Pair(day, dayWorked))
-        _daysWorked.postValue(list)
+        val map = daysWorked.value
+        map?.set(day, (dayWorked))
+        _daysWorked.postValue(map)
     }
 }

@@ -105,9 +105,10 @@ fun calculateDayEarning(
         }
     }
     if (start < overtimeStart) {
-        if (end <= overtimeStart) {
+        if (end <= overtimeStart && start < end) {
             overtime += end - start
-        } else if (end > overtimeStart) {
+        }
+        else if (end > overtimeStart) {
             overtime += overtimeStart - start
             time += end - overtimeStart
         }
