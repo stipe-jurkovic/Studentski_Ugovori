@@ -29,9 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.studentskiugovori.model.data.calculateDayEarning
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Preview
 @Composable
@@ -52,7 +55,7 @@ fun CalcWholeCompose() {
     var showTimePicker by remember { mutableStateOf(false) }
     var startSelected by remember { mutableStateOf(false) }
     var endSelected by remember { mutableStateOf(false) }
-    val datemoney by remember { mutableStateOf(mutableMapOf<LocalDate, Float>()) }
+    val datemoney by remember { mutableStateOf(mutableMapOf<LocalDate, BigDecimal>()) }
     val timePickerStateStart = rememberTimePickerState()
     val timePickerStateEnd = rememberTimePickerState()
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
@@ -110,13 +113,16 @@ fun CalcWholeCompose() {
                                         if (!sheetState.isVisible) {
                                             showBottomSheet = false
                                             if (selection != null) {
-                                                val startTime =
-                                                    timePickerStateEnd.hour + timePickerStateEnd.minute / 60f
-                                                val endTime =
-                                                    timePickerStateStart.hour + timePickerStateStart.minute / 60f
                                                 val selectionDate = selection as CalendarDay
-                                                datemoney[selectionDate.date] =
-                                                    ((startTime - endTime) * 5.3f)
+                                                val neto = calculateDayEarning(
+                                                LocalTime.of(timePickerStateStart.hour, timePickerStateStart.minute),
+                                                LocalTime.of(timePickerStateEnd.hour, timePickerStateEnd.minute),
+                                                5.3.toBigDecimal()
+                                                )
+                                                if (neto.compareTo(BigDecimal.ZERO) != 0)
+                                                    datemoney[selectionDate.date] = neto
+                                                else
+                                                    datemoney.remove(selectionDate.date)
                                             }
                                         }
                                     }
@@ -132,8 +138,11 @@ fun CalcWholeCompose() {
         ) {
             Column {
                 selection = CalcCompose(datemoney)
+                val sum = datemoney.values.fold(BigDecimal.ZERO) { acc, value ->
+                    acc + value
+                }
                 Column {
-                    Text("Ukupna zarada: " + datemoney.values.sum())
+                    Text("Ukupna zarada: $sum")
                     Text("Ukupna zarada ovaj tjedan: ")
                     Text("Ukupna predviđena zarada: ")
                 }

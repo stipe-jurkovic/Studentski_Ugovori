@@ -37,6 +37,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -60,14 +61,7 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 @Preview
 @Composable
 fun ThemeCalcCompose() {
-    var datemoney by remember { mutableStateOf(mapOf<LocalDate, Float>()) }
-
-    val mutabledatemoney = datemoney.toMutableMap()
-    mutabledatemoney[LocalDate.now()] = 10.0f
-    mutabledatemoney[LocalDate.now().plusDays(8)] = 20.0f
-    mutabledatemoney[LocalDate.now().plusDays(12)] = 30.0f
-    mutabledatemoney[LocalDate.now().plusDays(3)] = 40.0f
-    datemoney = mutabledatemoney
+    var datemoney by remember { mutableStateOf(mapOf<LocalDate, BigDecimal>()) }
     AppTheme {
         CalcCompose(datemoney = datemoney)
     }
@@ -75,13 +69,12 @@ fun ThemeCalcCompose() {
 
 
 @Composable
-fun CalcCompose( datemoney: Map<LocalDate, Float>): CalendarDay? {
+fun CalcCompose( datemoney: Map<LocalDate, BigDecimal>): CalendarDay? {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
-    //var datemoney by remember { mutableStateOf(mapOf<LocalDate, Float>()) }
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -145,7 +138,7 @@ fun Day(
     day: CalendarDay,
     isSelected: Boolean = false,
     colors: List<Color> = emptyList(),
-    dateMoney: Map<LocalDate, Float>,
+    dateMoney: Map<LocalDate, BigDecimal>,
     onClick: (CalendarDay) -> Unit = {},
 ) {
     val selectedItemColor = MaterialTheme.colorScheme.secondary
