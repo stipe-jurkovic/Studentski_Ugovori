@@ -85,12 +85,12 @@ fun CalcWholeCompose() {
             modifier = Modifier.padding(contentPadding),
             sheetContent = {
                 if (showBottomSheet) {
-                    val daysWorked = homeViewModel.daysWorked.value
+                    val daysWorked = homeViewModel.daysWorked.collectAsState().value
                     var timeStart = LocalTime.of(6, 0)
                     var timeEnd = LocalTime.of(14, 0)
-                    if (!daysWorked?.get(selection?.date).isNullOrEmpty()) {
-                        timeStart = daysWorked?.get(selection?.date)?.first()?.timeStart
-                        timeEnd = daysWorked?.get(selection?.date)?.first()?.timeEnd
+                    if (!daysWorked[selection?.date].isNullOrEmpty()) {
+                        timeStart = daysWorked[selection?.date]?.first()?.timeStart
+                        timeEnd = daysWorked[selection?.date]?.first()?.timeEnd
                     }
                     val timePickerStateStart = rememberTimePickerState(
                         timeStart?.hour ?: 6,
