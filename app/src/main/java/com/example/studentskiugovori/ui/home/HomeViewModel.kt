@@ -7,25 +7,28 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.security.crypto.MasterKeys
 import com.example.studentskiugovori.model.Repository
 import com.example.studentskiugovori.model.data.calculateEarningsAndGetNumbers
 import com.example.studentskiugovori.model.dataclasses.CardData
-import com.example.studentskiugovori.model.dataclasses.DayWorked
 import com.example.studentskiugovori.model.dataclasses.Ugovor
+import com.example.studentskiugovori.model.dataclasses.WorkedHours
 import com.example.studentskiugovori.utils.Result
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Locale
 
 class HomeViewModel(private val repository: Repository, context: Context) : ViewModel() {
 
 
-    val sharedPref : SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
+    val sharedPref: SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
 
 
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
@@ -46,11 +49,19 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
     private val _ugovori = MutableLiveData<List<Ugovor>>().apply { value = emptyList() }
     val ugovori: LiveData<List<Ugovor>> = _ugovori
 
-    val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
+    private val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
     val cardData: LiveData<CardData> = _cardData
 
-    val _daysWorked = MutableLiveData<MutableMap<CalendarDay, MutableList<DayWorked>>>().apply { value = mutableMapOf() }
-    val daysWorked: LiveData<MutableMap<CalendarDay, MutableList<DayWorked>>> = _daysWorked
+    private val _daysWorked: MutableStateFlow<Map<LocalDate, List<WorkedHours>>> =
+        MutableStateFlow(mapOf())
+    val daysWorked: StateFlow<Map<LocalDate, List<WorkedHours>>> = _daysWorked
+
+    private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> =
+        MutableStateFlow(mapOf())
+    val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
+
+    val _test = MutableLiveData<String>().apply { value = "test" }
+    val test: LiveData<String> = _test
 
     fun getData(refresh: Boolean = false) {
         if (refresh) {
@@ -86,9 +97,34 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
             }
         }
     }
-    fun addDayWorked(day: CalendarDay, dayWorked: DayWorked) {
-        val map = daysWorked.value
-        map?.set(day, map[day]?.apply { add(dayWorked) } ?: mutableListOf(dayWorked))
-        _daysWorked.postValue(map)
+
+    fun addDayWorked(day: CalendarDay, workedHours: WorkedHours) {
+        val map: MutableMap<LocalDate, List<WorkedHours>> = _daysWorked.value.toMutableMap()
+        val list = map[workedHours.date]?.toMutableList()
+        list?.add(workedHours)
+        map[day.date] = list ?: listOf(workedHours)
+        _daysWorked.value = map
+
+        val totalMap: MutableMap<LocalDate, BigDecimal> = totalPerDay.value.toMutableMap()
+        var total = workedHours.moneyEarned
+        if (total > BigDecimal(99)) { total = total.setScale(1) }
+        totalMap[day.date] = totalMap[day.date]?.plus(total) ?: total
+        _totalPerDay.value = totalMap
+    }
+
+    fun deleteWorkedItem(workedHours: WorkedHours) {
+        val map: MutableMap<LocalDate, List<WorkedHours>> = _daysWorked.value.toMutableMap()
+        val list = map[workedHours.date]?.toMutableList()
+        list?.remove(workedHours)
+        map[workedHours.date] = list ?: emptyList()
+        _daysWorked.value = map
+
+        val totalMap: MutableMap<LocalDate, BigDecimal> = totalPerDay.value.toMutableMap()
+        if (totalMap[workedHours.date] != null && totalMap[workedHours.date]!! <= workedHours.moneyEarned) {
+            totalMap.remove(workedHours.date)
+        } else {
+            totalMap[workedHours.date] = (totalMap[workedHours.date]?.minus(workedHours.moneyEarned)) ?: 0.toBigDecimal()
+        }
+        _totalPerDay.value = totalMap
     }
 }

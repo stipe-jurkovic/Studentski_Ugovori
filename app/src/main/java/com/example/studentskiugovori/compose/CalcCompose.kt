@@ -7,18 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,7 +43,6 @@ import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -67,22 +64,21 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 @Preview
 @Composable
 fun ThemeCalcCompose() {
-    var datemoney by remember { mutableStateOf(mapOf<LocalDate, BigDecimal>()) }
     AppTheme {
-        CalcCompose(datemoney = datemoney)
+        CalcCompose()
     }
 }
 
 
 @Composable
-fun CalcCompose( datemoney: Map<LocalDate, BigDecimal>): CalendarDay? {
+fun CalcCompose(): CalendarDay? {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
     val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
-    val daysWorked = homeViewModel.daysWorked.value
+    val daysWorked = homeViewModel.daysWorked.collectAsState().value
 
 
     val state = rememberCalendarState(
@@ -117,7 +113,7 @@ fun CalcCompose( datemoney: Map<LocalDate, BigDecimal>): CalendarDay? {
         HorizontalCalendar(
             state = state,
             dayContent = { day ->
-                Day(day, isSelected = selection == day, dateMoney = datemoney) { clicked ->
+                Day(day, isSelected = selection == day) { clicked ->
                     if (clicked == selection) {
                         selection = null
                     } else {
@@ -130,13 +126,9 @@ fun CalcCompose( datemoney: Map<LocalDate, BigDecimal>): CalendarDay? {
                 DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
             }
         )
-        val list: MutableList<BigDecimal> = mutableListOf()
-        list.add(BigDecimal(1))
-        list.add(BigDecimal(2))
-        list.add(BigDecimal(3))
         HorizontalDivider()
         Column(modifier = Modifier.fillMaxWidth()) {
-            daysWorked?.get(selection)?.toList()?.forEach {
+            daysWorked?.get(selection?.date)?.toList()?.forEach {
                 WorkedItemCompose(it)
             }
         }
@@ -150,7 +142,6 @@ fun Day(
     day: CalendarDay,
     isSelected: Boolean = false,
     colors: List<Color> = emptyList(),
-    dateMoney: Map<LocalDate, BigDecimal>,
     onClick: (CalendarDay) -> Unit = {},
 ) {
     val selectedItemColor = MaterialTheme.colorScheme.secondary
@@ -159,6 +150,10 @@ fun Day(
         DayPosition.MonthDate -> Color.Unspecified
         DayPosition.InDate, DayPosition.OutDate -> inActiveTextColor
     }
+    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+    var total = BigDecimal(0)
+    val daysWorked = homeViewModel.totalPerDay.collectAsState()
+
     Box(
         modifier = Modifier
             .aspectRatio(1f)  // This is important for square sizing!
@@ -177,18 +172,14 @@ fun Day(
             verticalArrangement = Arrangement.Top
         ) {
             Text(text = day.date.dayOfMonth.toString(), color = textColor)
-            var money = dateMoney[day.date]
-            val text = if (money != null) {
-                if (money > BigDecimal(99))
-                { money = money.setScale(1)}
-                money.toString() + "€"
-            }
-            else { "" }
             when (day.position) {
-                DayPosition.MonthDate -> Text(text = text ?:"")
+                DayPosition.MonthDate -> if (daysWorked.value[day.date] != null){
+                    Text(text = (daysWorked.value[day.date].toString() + " €") ?: "")
+                }else{
+                    Text(text = "")
+                }
                 else-> Text(text = "")
             }
-
         }
     }
 }

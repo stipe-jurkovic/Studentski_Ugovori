@@ -1,12 +1,15 @@
 package com.example.studentskiugovori.model.data
 
 import com.example.studentskiugovori.model.dataclasses.CardData
+import com.example.studentskiugovori.model.dataclasses.WorkedHours
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.model.dataclasses.UgovoriData
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
 import java.time.LocalTime
+import com.example.studentskiugovori.model.Result.Result
 
 
 fun parseUgovore(data: String): List<Ugovor> {
@@ -65,19 +68,20 @@ fun calculateEarningsAndGetNumbers(list: List<Ugovor>): CardData {
 }
 
 fun calculateDayEarning(
+    date: LocalDate,
     startTime: LocalTime,
     endTime: LocalTime,
     hourly: BigDecimal,
     isOvertimeDay: Boolean = false
-): BigDecimal {
+): Result<WorkedHours> {
     val startHourMinutes = BigDecimal(startTime.hour * 60 + startTime.minute)
     val endHourMinutes = BigDecimal(endTime.hour * 60 + endTime.minute)
     val start = startHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
     var end = endHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
 
-    if (start == end) return 0.toBigDecimal()
+    if (start == end) return Result.Error("Start and end time are the same")
     if (end.stripTrailingZeros() == BigDecimal(0)) end = BigDecimal(24)
-    if (end <= start) return 0.toBigDecimal()
+    if (end <= start) return Result.Error("End time is before start time")
 
     var overtime = BigDecimal(0)
     var time = BigDecimal(0)
@@ -116,5 +120,5 @@ fun calculateDayEarning(
             .setScale(2, RoundingMode.HALF_UP)
     }
 
-    return result
+    return Result.Success(WorkedHours(date, startTime, endTime, result, (overtime + time).stripTrailingZeros()))
 }

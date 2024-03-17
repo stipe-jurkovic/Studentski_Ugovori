@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class DayWorked(
+data class WorkedHours(
     var date: LocalDate,
     var timeStart: LocalTime,
     var timeEnd: LocalTime,
