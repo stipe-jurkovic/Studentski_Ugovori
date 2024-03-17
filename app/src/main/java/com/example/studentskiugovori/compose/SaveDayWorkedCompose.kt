@@ -1,6 +1,5 @@
 package com.example.studentskiugovori.compose
 
-import android.text.Selection
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -81,9 +79,15 @@ fun CalcWholeCompose() {
             modifier = Modifier.padding(contentPadding),
             sheetContent = {
                 if (showBottomSheet) {
-                    val daysWorked = homeViewModel.daysWorked.value as Map<CalendarDay, DayWorked>
-                    val timePickerStateStart = rememberTimePickerState(daysWorked[selection]?.timeStart?.hour?: 6, daysWorked[selection]?.timeStart?.minute?: 0)
-                    val timePickerStateEnd = rememberTimePickerState( daysWorked[selection]?.timeEnd?.hour?: 14, daysWorked[selection]?.timeEnd?.minute?: 0)
+                    val daysWorked = homeViewModel.daysWorked.value
+                    val timePickerStateStart = rememberTimePickerState(
+                        daysWorked?.get(selection)?.first()?.timeStart?.hour ?: 6,
+                        daysWorked?.get(selection)?.first()?.timeStart?.minute ?: 0
+                    )
+                    val timePickerStateEnd = rememberTimePickerState(
+                        daysWorked?.get(selection)?.first()?.timeEnd?.hour ?: 14,
+                        daysWorked?.get(selection)?.first()?.timeEnd?.minute ?: 0
+                    )
                     ModalBottomSheet(
                         sheetState = sheetState,
                         onDismissRequest = {
@@ -122,21 +126,35 @@ fun CalcWholeCompose() {
                                             if (selection != null) {
                                                 val selectionDate = selection as CalendarDay
                                                 val neto = calculateDayEarning(
-                                                LocalTime.of(timePickerStateStart.hour, timePickerStateStart.minute),
-                                                LocalTime.of(timePickerStateEnd.hour, timePickerStateEnd.minute),
-                                                5.3.toBigDecimal()
+                                                    LocalTime.of(
+                                                        timePickerStateStart.hour,
+                                                        timePickerStateStart.minute
+                                                    ),
+                                                    LocalTime.of(
+                                                        timePickerStateEnd.hour,
+                                                        timePickerStateEnd.minute
+                                                    ),
+                                                    5.3.toBigDecimal()
                                                 )
                                                 if (neto.compareTo(BigDecimal.ZERO) != 0) {
-                                                    datemoney[selectionDate.date] = neto
-                                                }
-                                                else {
+                                                    datemoney[selectionDate.date] =
+                                                        datemoney[selectionDate.date]?.plus(neto)
+                                                            ?: neto
+                                                } else {
                                                     datemoney.remove(selectionDate.date)
                                                 }
-                                                homeViewModel.addDayWorked(selectionDate,
+                                                homeViewModel.addDayWorked(
+                                                    selectionDate,
                                                     DayWorked(
                                                         selectionDate.date,
-                                                        LocalTime.of(timePickerStateStart.hour, timePickerStateStart.minute),
-                                                        LocalTime.of(timePickerStateEnd.hour, timePickerStateEnd.minute),
+                                                        LocalTime.of(
+                                                            timePickerStateStart.hour,
+                                                            timePickerStateStart.minute
+                                                        ),
+                                                        LocalTime.of(
+                                                            timePickerStateEnd.hour,
+                                                            timePickerStateEnd.minute
+                                                        ),
                                                         neto
                                                     )
                                                 )

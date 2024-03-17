@@ -67,61 +67,54 @@ fun calculateEarningsAndGetNumbers(list: List<Ugovor>): CardData {
 fun calculateDayEarning(
     startTime: LocalTime,
     endTime: LocalTime,
-    hourly: BigDecimal
+    hourly: BigDecimal,
+    isOvertimeDay: Boolean = false
 ): BigDecimal {
     val startHourMinutes = BigDecimal(startTime.hour * 60 + startTime.minute)
     val endHourMinutes = BigDecimal(endTime.hour * 60 + endTime.minute)
     val start = startHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
-    val end = endHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
+    var end = endHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
+
+    if (start == end) return 0.toBigDecimal()
+    if (end.stripTrailingZeros() == BigDecimal(0)) end = BigDecimal(24)
+    if (end <= start) return 0.toBigDecimal()
 
     var overtime = BigDecimal(0)
     var time = BigDecimal(0)
-    val overtimeEnd = BigDecimal(22)
-    val overtimeStart = BigDecimal(6)
+    val otNightStart = BigDecimal(22)
+    val otMorningEnd = BigDecimal(6)
 
-    if (start in overtimeStart..overtimeEnd) {
-        if (end in overtimeStart..overtimeEnd && end > start) {
+    if (start < otMorningEnd) {
+        if (end <= otMorningEnd) {
+            overtime += end - start
+        } else if (end > otMorningEnd) {
+            overtime += otMorningEnd - start
+            time += end - otMorningEnd
+        } else if (end >= otNightStart) {
+            overtime += otMorningEnd - start
+            time += BigDecimal(16)
+            overtime += end - otNightStart
+        }
+    } else if (start >= otMorningEnd && start < otNightStart) {
+        if (end <= otNightStart) {
             time += end - start
-        } else if (end > overtimeEnd) {
-            time += overtimeEnd - start
-            overtime += end - overtimeEnd
-        } else if (end < overtimeStart) {
-            time += overtimeEnd - start
-            overtime += end + BigDecimal(2)
-        } else if (end >= overtimeStart) {
-            time += overtimeEnd - start
-            overtime += BigDecimal(8)
-            time += end - overtimeStart
+        } else if (end > otNightStart) {
+            time = otNightStart - start
+            overtime += end - otNightStart
         }
-    }
-    if (start > overtimeEnd) {
-        if (end >= overtimeEnd) {
-            overtime += end - start
-        } else if (end <= overtimeStart) {
-            overtime += end + BigDecimal(2)
-        } else if (end > overtimeStart) {
-            overtime += BigDecimal(24) - start + overtimeStart
-            time += end - overtimeStart
-        }
-    }
-    if (start < overtimeStart) {
-        if (end <= overtimeStart && start < end) {
-            overtime += end - start
-        }
-        else if (end > overtimeStart) {
-            overtime += overtimeStart - start
-            time += end - overtimeStart
-        }
+    } else if (start >= otNightStart) {
+        overtime += end - start
     }
 
-    return ((overtime.multiply(BigDecimal(1.5)) + time).multiply(hourly).setScale(2, RoundingMode.HALF_UP))
+    val result = if (isOvertimeDay) {
+        (overtime + time).multiply(BigDecimal(1.5))
+            .multiply(hourly)
+            .setScale(2, RoundingMode.HALF_UP)
+    } else {
+        (overtime.multiply(BigDecimal(1.5)) + time)
+            .multiply(hourly)
+            .setScale(2, RoundingMode.HALF_UP)
+    }
+
+    return result
 }
-
-
-
-
-
-
-
-
-

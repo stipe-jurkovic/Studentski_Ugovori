@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.example.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
 import com.example.studentskiugovori.compose.calendarcompose.clickable
 import com.example.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
+import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -37,6 +42,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -75,6 +81,9 @@ fun CalcCompose( datemoney: Map<LocalDate, BigDecimal>): CalendarDay? {
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
+    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+    val daysWorked = homeViewModel.daysWorked.value
+
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -121,13 +130,16 @@ fun CalcCompose( datemoney: Map<LocalDate, BigDecimal>): CalendarDay? {
                 DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
             }
         )
-        /*val pageBackgroundColor = Color.White
-        Divider(color = pageBackgroundColor)
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(items = flightsInSelectedDate.value) { flight ->
-                FlightInformation(flight)
+        val list: MutableList<BigDecimal> = mutableListOf()
+        list.add(BigDecimal(1))
+        list.add(BigDecimal(2))
+        list.add(BigDecimal(3))
+        HorizontalDivider()
+        Column(modifier = Modifier.fillMaxWidth()) {
+            daysWorked?.get(selection)?.toList()?.forEach {
+                WorkedItemCompose(it)
             }
-        }*/
+        }
     }
     return selection
 

@@ -9,6 +9,6 @@ data class DayWorked(
     var timeStart: LocalTime,
     var timeEnd: LocalTime,
     var moneyEarned: BigDecimal,
+    var hours: BigDecimal = BigDecimal.ZERO,
     var completed: Boolean = true,
-    var hours: Int = 0,
 )
