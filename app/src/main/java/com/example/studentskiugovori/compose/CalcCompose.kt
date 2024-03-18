@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,8 +40,8 @@ import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
-import java.math.BigDecimal
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -90,10 +89,12 @@ fun CalcCompose(): CalendarDay? {
     val daysOfWeek = daysOfWeek() // Available in the library
     val coroutineScope = rememberCoroutineScope()
     val visibleMonth = rememberFirstCompletelyVisibleMonth(state)
-    LaunchedEffect(visibleMonth) { selection = null }// Clear selection if we scroll to a new month.
+    LaunchedEffect(visibleMonth) {
+        selection = CalendarDay(LocalDate.now(), DayPosition.MonthDate)
+    }// Clear selection if we scroll to a new month.
     Column(
-        verticalArrangement = Arrangement.Top,
-        modifier = Modifier.fillMaxWidth()) {
+        verticalArrangement = Arrangement.Top, modifier = Modifier.fillMaxWidth()
+    ) {
         SimpleCalendarTitle(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.tertiaryContainer)
@@ -110,25 +111,16 @@ fun CalcCompose(): CalendarDay? {
                 }
             },
         )
-        HorizontalCalendar(
-            state = state,
-            dayContent = { day ->
-                Day(day, isSelected = selection == day) { clicked ->
-                    if (clicked == selection) {
-                        selection = null
-                    } else {
-                        selection = clicked
-                    }
-                }
-            },
-            userScrollEnabled = false,
-            monthHeader = {
-                DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
+        HorizontalCalendar(state = state, dayContent = { day ->
+            Day(day, isSelected = selection == day) { clicked ->
+                selection = if (clicked == selection) { null } else { clicked }
             }
-        )
+        }, userScrollEnabled = false, monthHeader = {
+            DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
+        })
         HorizontalDivider()
         Column(modifier = Modifier.fillMaxWidth()) {
-            daysWorked?.get(selection?.date)?.toList()?.forEach {
+            daysWorked[selection?.date]?.toList()?.forEach {
                 WorkedItemCompose(it)
             }
         }
@@ -151,7 +143,6 @@ fun Day(
         DayPosition.InDate, DayPosition.OutDate -> inActiveTextColor
     }
     val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
-    var total = BigDecimal(0)
     val daysWorked = homeViewModel.totalPerDay.collectAsState()
 
     Box(
@@ -163,8 +154,7 @@ fun Day(
                 color = if (isSelected) selectedItemColor else Color.Transparent,
             )
             .background(color = MaterialTheme.colorScheme.tertiaryContainer)
-            .clickable { onClick(day) },
-        contentAlignment = Alignment.Center
+            .clickable { onClick(day) }, contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier,
@@ -173,12 +163,13 @@ fun Day(
         ) {
             Text(text = day.date.dayOfMonth.toString(), color = textColor)
             when (day.position) {
-                DayPosition.MonthDate -> if (daysWorked.value[day.date] != null){
+                DayPosition.MonthDate -> if (daysWorked.value[day.date] != null) {
                     Text(text = (daysWorked.value[day.date].toString() + " €") ?: "")
-                }else{
+                } else {
                     Text(text = "")
                 }
-                else-> Text(text = "")
+
+                else -> Text(text = "")
             }
         }
     }

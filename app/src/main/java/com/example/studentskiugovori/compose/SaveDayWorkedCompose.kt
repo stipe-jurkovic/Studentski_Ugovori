@@ -67,8 +67,6 @@ fun CalcWholeCompose() {
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
     val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
 
-
-
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
