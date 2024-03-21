@@ -4,3 +4,9 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.22" apply false
     kotlin("plugin.serialization") version "1.4.21"
 }
+
+buildscript{
+    dependencies{
+        classpath ("io.realm:realm-gradle-plugin:10.17.0")
+    }
+}

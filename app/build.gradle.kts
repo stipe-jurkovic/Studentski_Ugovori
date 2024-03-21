@@ -2,8 +2,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version "1.4.21"
-    id("kotlin-kapt")/*
-    id("realm-android")*/
+    id("kotlin-kapt")
+    id ("realm-android")
+
 }
 
 android {
@@ -97,8 +98,4 @@ dependencies {
     // The compose calendar library
     implementation("com.kizitonwose.calendar:compose:2.4.0")
 
-    /*//realm
-    implementation("io.realm:realm-gradle-plugin:10.10.0")
-    implementation("io.realm:realm-kotlin-extensions:10.10.0")
-    annotationProcessor("io.realm:realm-android:10.10.0")*/
 }
