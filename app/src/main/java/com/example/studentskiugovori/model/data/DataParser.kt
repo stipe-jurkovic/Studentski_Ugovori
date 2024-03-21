@@ -10,6 +10,7 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.LocalTime
 import com.example.studentskiugovori.model.Result.Result
+import java.util.UUID
 
 
 fun parseUgovore(data: String): List<Ugovor> {
@@ -120,5 +121,5 @@ fun calculateDayEarning(
             .setScale(2, RoundingMode.HALF_UP)
     }
 
-    return Result.Success(WorkedHours(date, startTime, endTime, result, (overtime + time).stripTrailingZeros()))
+    return Result.Success(WorkedHours(UUID.randomUUID() ,date, startTime, endTime, result, (overtime + time).stripTrailingZeros()))
 }

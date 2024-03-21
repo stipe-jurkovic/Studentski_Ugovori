@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.time.LocalTime
+import java.util.UUID
 
 
 @Composable
@@ -150,6 +151,7 @@ fun CalcWholeCompose() {
                                                     )) {
                                                         is Result.Success -> result.data
                                                         is Result.Error -> WorkedHours(
+                                                            UUID.randomUUID(),
                                                             selectionDate.date,
                                                             LocalTime.of(
                                                                 timePickerStateStart.hour,

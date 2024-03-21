@@ -3,8 +3,10 @@ package com.example.studentskiugovori.model.dataclasses
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.UUID
 
 data class WorkedHours(
+    var id: UUID = UUID.randomUUID(),
     var date: LocalDate,
     var timeStart: LocalTime,
     var timeEnd: LocalTime,

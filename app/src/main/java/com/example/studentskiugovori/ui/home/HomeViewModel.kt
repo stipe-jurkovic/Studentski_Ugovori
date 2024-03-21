@@ -12,8 +12,13 @@ import com.example.studentskiugovori.model.data.calculateEarningsAndGetNumbers
 import com.example.studentskiugovori.model.dataclasses.CardData
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
+import com.example.studentskiugovori.model.dataclasses.WorkedHoursRealm
+import com.example.studentskiugovori.model.getWorkedHours
 import com.example.studentskiugovori.utils.Result
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
+import io.realm.Realm
+import io.realm.RealmResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +26,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
+import java.math.MathContext
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.Locale
 
 class HomeViewModel(private val repository: Repository, context: Context) : ViewModel() {
@@ -32,6 +39,9 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
 
 
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
+    val realm: Realm by lazy { Realm.getDefaultInstance() }
+
+
 
 
     private val _loadedTxt = MutableLiveData<String>().apply { value = "unset" }
@@ -52,17 +62,19 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
     private val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
     val cardData: LiveData<CardData> = _cardData
 
-    private val _daysWorked: MutableStateFlow<Map<LocalDate, List<WorkedHours>>> =
-        MutableStateFlow(mapOf())
+    private val _daysWorked: MutableStateFlow<Map<LocalDate, List<WorkedHours>>> = MutableStateFlow(mapOf())
     val daysWorked: StateFlow<Map<LocalDate, List<WorkedHours>>> = _daysWorked
 
-    private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> =
-        MutableStateFlow(mapOf())
+    private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> = MutableStateFlow(mapOf())
     val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
 
     val _test = MutableLiveData<String>().apply { value = "test" }
     val test: LiveData<String> = _test
-
+    init{
+        realm.getWorkedHours().getWorkedHours().forEach(){
+            addDayWorked(CalendarDay(LocalDate.ofEpochDay(it.date), DayPosition.MonthDate), realmWorkedToRegWorked(it), false)
+        }
+    }
     fun getData(refresh: Boolean = false) {
         if (refresh) {
             _isRefreshing.postValue(true)
@@ -98,12 +110,16 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
         }
     }
 
-    fun addDayWorked(day: CalendarDay, workedHours: WorkedHours) {
+    fun addDayWorked(day: CalendarDay, workedHours: WorkedHours, addToDb: Boolean = true) {
         val map: MutableMap<LocalDate, List<WorkedHours>> = _daysWorked.value.toMutableMap()
         val list = map[workedHours.date]?.toMutableList()
         list?.add(workedHours)
         map[day.date] = list ?: listOf(workedHours)
         _daysWorked.value = map
+
+        if (addToDb) {
+            realm.getWorkedHours().addToDb(workedHours)
+        }
 
         val totalMap: MutableMap<LocalDate, BigDecimal> = totalPerDay.value.toMutableMap()
         var total = workedHours.moneyEarned
@@ -119,6 +135,8 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
         map[workedHours.date] = list ?: emptyList()
         _daysWorked.value = map
 
+        realm.getWorkedHours().deleteWorkedHoursFromDb(workedHours.id)
+
         val totalMap: MutableMap<LocalDate, BigDecimal> = totalPerDay.value.toMutableMap()
         if (totalMap[workedHours.date] != null && totalMap[workedHours.date]!! <= workedHours.moneyEarned) {
             totalMap.remove(workedHours.date)
@@ -127,4 +145,33 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
         }
         _totalPerDay.value = totalMap
     }
+
+    fun getWorkedHours(): RealmResults<WorkedHoursRealm> {
+        return realm.getWorkedHours().getWorkedHours()
+    }
+
+    private fun realmWorkedToRegWorked(workedHoursRealm: WorkedHoursRealm): WorkedHours {
+
+        return WorkedHours(
+            workedHoursRealm.id,
+            LocalDate.ofEpochDay(workedHoursRealm.date),
+            LocalTime.of(
+                workedHoursRealm.timeStart.split(":")[0].toInt(),
+                workedHoursRealm.timeStart.split(":")[1].toInt()
+            ),
+            LocalTime.of(
+                workedHoursRealm.timeEnd.split(":")[0].toInt(),
+                workedHoursRealm.timeEnd.split(":")[1].toInt()
+            ),
+            BigDecimal(workedHoursRealm.moneyEarned).round(MathContext(3)),
+            BigDecimal(workedHoursRealm.hours).round(MathContext(3)),
+            workedHoursRealm.completed
+        )
+    }
+
+    override fun onCleared() {
+        realm.close()
+        super.onCleared()
+    }
+
 }

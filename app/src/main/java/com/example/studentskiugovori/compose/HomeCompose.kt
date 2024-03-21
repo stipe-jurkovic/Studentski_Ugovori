@@ -39,7 +39,7 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
     val loadedTxt = homeViewModel.loadedTxt.observeAsState().value
     val snackbarHostState = remember { homeViewModel.snackbarHostState }
     val isRefreshing = homeViewModel.isRefreshing.observeAsState().value
-    val pullRefreshState = isRefreshing?.let { it ->
+    val pullRefreshState = isRefreshing?.let {
         rememberPullRefreshState(it, {
             homeViewModel.getData(true)
         })
@@ -105,14 +105,10 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
                                 modifier = Modifier.padding(8.dp, 4.dp)
                             )
                         }
-                        val newestPaid = remember {
-                            ugovori.filter { it.STATUSNAZIV?.contains("Ispl") == true }[0]
-                        }
-                        if (newestPaid.STATUSNAZIV?.contains("Ispl") == true) {
-                            UgovorCompose(ugovor = newestPaid)
-                        }
-
-                    }
+                        val zadnjiIsplacen = ugovori.firstOrNull { it.STATUSNAZIV?.contains("Ispl") == true }
+                        if (zadnjiIsplacen != null) {
+                            UgovorCompose(ugovor = zadnjiIsplacen)
+                        }                    }
                 }
             }
         }
