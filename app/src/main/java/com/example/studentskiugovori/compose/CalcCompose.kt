@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +23,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +36,7 @@ import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -40,6 +44,7 @@ import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
+import java.math.BigDecimal
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -122,6 +127,27 @@ fun CalcCompose(): CalendarDay? {
         Column(modifier = Modifier.fillMaxWidth()) {
             daysWorked[selection?.date]?.toList()?.forEach {
                 WorkedItemCompose(it)
+            }
+        }
+        Column {
+            var sum = BigDecimal(0)
+            homeViewModel.totalPerDay.collectAsState().value.forEach {
+                if (it.key.month == visibleMonth.yearMonth.month) {
+                    sum += it.value
+                }
+            }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    Modifier
+                        .padding(10.dp)
+                        .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) { Text("Ukupna zarada ovaj mjesec: $sum €") }
+                /*Text("Ukupna zarada ovaj tjedan: ")
+                Text("Ukupna predviđena zarada: ")*/
             }
         }
     }

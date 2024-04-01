@@ -10,7 +10,7 @@ import java.time.LocalTime
 import java.util.UUID
 
 open class WorkedHoursRealm(
-    var id:UUID = UUID.randomUUID(),
+    var id: UUID = UUID.randomUUID(),
     var date: Long,
     var timeStart: String,
     var timeEnd: String,

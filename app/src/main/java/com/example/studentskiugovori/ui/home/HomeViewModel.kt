@@ -18,7 +18,6 @@ import com.example.studentskiugovori.utils.Result
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import io.realm.Realm
-import io.realm.RealmResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,7 +71,7 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
     val test: LiveData<String> = _test
     init{
         realm.getWorkedHours().getWorkedHours().forEach(){
-            addDayWorked(CalendarDay(LocalDate.ofEpochDay(it.date), DayPosition.MonthDate), realmWorkedToRegWorked(it), false)
+            addDayWorked(CalendarDay(LocalDate.ofEpochDay(it.date), DayPosition.MonthDate), realmWorkedToRegularWorked(it), false)
         }
     }
     fun getData(refresh: Boolean = false) {
@@ -132,7 +131,11 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
         val map: MutableMap<LocalDate, List<WorkedHours>> = _daysWorked.value.toMutableMap()
         val list = map[workedHours.date]?.toMutableList()
         list?.remove(workedHours)
-        map[workedHours.date] = list ?: emptyList()
+        if (list.isNullOrEmpty()){
+            map.remove(workedHours.date)
+        } else{
+            map[workedHours.date] = list
+        }
         _daysWorked.value = map
 
         realm.getWorkedHours().deleteWorkedHoursFromDb(workedHours.id)
@@ -146,11 +149,7 @@ class HomeViewModel(private val repository: Repository, context: Context) : View
         _totalPerDay.value = totalMap
     }
 
-    fun getWorkedHours(): RealmResults<WorkedHoursRealm> {
-        return realm.getWorkedHours().getWorkedHours()
-    }
-
-    private fun realmWorkedToRegWorked(workedHoursRealm: WorkedHoursRealm): WorkedHours {
+    private fun realmWorkedToRegularWorked(workedHoursRealm: WorkedHoursRealm): WorkedHours {
 
         return WorkedHours(
             workedHoursRealm.id,

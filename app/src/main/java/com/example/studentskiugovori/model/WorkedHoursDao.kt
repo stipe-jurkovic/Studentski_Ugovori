@@ -12,12 +12,12 @@ import io.realm.RealmModel
 
 fun Realm.getWorkedHours() : WorkedHoursDao = WorkedHoursDao(this)
 
-class WorkedHoursDao (val realm: Realm) {
+class WorkedHoursDao (private val realm: Realm) {
 
     fun addToDb(workedHour: WorkedHours) {
         realm.executeTransactionAsync {
             val item = WorkedHoursRealm(
-                UUID.randomUUID(),
+                workedHour.id,
                 workedHour.date.toEpochDay(),
                 "${workedHour.timeStart.hour}:${ workedHour.timeStart.minute }",
                 "${workedHour.timeEnd.hour}:${ workedHour.timeEnd.minute }",
