@@ -3,12 +3,10 @@ package com.example.studomatisvu.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -31,6 +29,7 @@ import com.example.studentskiugovori.compose.CardCompose
 import com.example.studentskiugovori.compose.CircularIndicator
 import com.example.studentskiugovori.model.dataclasses.CardData
 import com.example.studentskiugovori.ui.home.HomeViewModel
+import com.example.studentskiugovori.ui.home.Status
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -57,58 +56,64 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         ) { innerPadding ->
 
-            if ((loadedTxt == "fetching" || loadedTxt == "unset") && !isRefreshing) {
+            if ((loadedTxt == Status.FETCHING || loadedTxt == Status.UNSET) && !isRefreshing) {
                 CircularIndicator()
             }
 
             Box(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
                     .padding(innerPadding)
-                    .background(color = colorResource(id = R.color.md_theme_background))
                     .fillMaxSize(),
             ) {
+                PullRefreshIndicator(
+                    isRefreshing, pullRefreshState, Modifier
+                        .align(Alignment.TopCenter)
+                        .zIndex(2f)
+                )
                 if (!ugovori.isNullOrEmpty()) {
-                    PullRefreshIndicator(
-                        isRefreshing, pullRefreshState, Modifier
-                            .align(Alignment.TopCenter)
-                            .zIndex(2f)
-                    )
-                    Column(
+                    LazyColumn(
                         modifier = Modifier.padding(16.dp, 10.dp, 16.dp, 0.dp),
                         verticalArrangement = Arrangement.Top
                     ) {
-                        CardCompose(homeViewModel.cardData.value ?: CardData())
-                        Row {
-                            Text(
-                                text = "Generirano: ${homeViewModel.generated.value ?: ""}",
-                                Modifier.padding(8.dp, 4.dp)
-                            )
-                        }
-                        HorizontalDivider(modifier = Modifier.padding(8.dp, 4.dp))
-                        Row {
-                            Text(
-                                text = "Izdani ugovori: ",
-                                fontSize = 16.sp,
-                                modifier = Modifier.padding(8.dp, 4.dp)
-                            )
-                        }
-                        ugovori.forEach {
-                            if (it.STATUSNAZIV?.contains("Izdan") == true) {
-                                UgovorCompose(ugovor = it)
+                        item {
+                            CardCompose(homeViewModel.cardData.observeAsState().value ?: CardData())
+                            Row {
+                                Text(
+                                    text = "Generirano: ${homeViewModel.generated.value ?: ""}",
+                                    Modifier.padding(8.dp, 4.dp)
+                                )
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(8.dp, 4.dp))
+                            if (ugovori.any { it.STATUSNAZIV?.contains("Izdan") == true }) {
+                                Row {
+                                    Text(
+                                        text = "Izdani ugovori: ",
+                                        fontSize = 16.sp,
+                                        modifier = Modifier.padding(8.dp, 4.dp)
+                                    )
+                                }
                             }
                         }
-                        Row {
-                            Text(
-                                text = "Zadnji isplaćeni ugovor: ",
-                                fontSize = 16.sp,
-                                modifier = Modifier.padding(8.dp, 4.dp)
-                            )
+                        items(ugovori.size) { index ->
+                            val ugovor = ugovori[index]
+                            if (ugovor.STATUSNAZIV?.contains("Izdan") == true) {
+                                UgovorCompose(ugovor)
+                            }
                         }
-                        val zadnjiIsplacen = ugovori.firstOrNull { it.STATUSNAZIV?.contains("Ispl") == true }
-                        if (zadnjiIsplacen != null) {
-                            UgovorCompose(ugovor = zadnjiIsplacen)
-                        }                    }
+                        item {
+                            val zadnjiIsplacen =
+                                ugovori.firstOrNull { it.STATUSNAZIV?.contains("Ispl") == true }
+                            if (zadnjiIsplacen != null) {
+                                Text(
+                                    text = "Zadnji isplaćeni ugovor: ",
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(8.dp, 4.dp)
+                                )
+                                UgovorCompose(ugovor = zadnjiIsplacen)
+                            }
+                        }
+                    }
+
                 }
             }
         }

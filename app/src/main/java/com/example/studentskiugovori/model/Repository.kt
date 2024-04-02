@@ -9,11 +9,15 @@ class Repository(private val networkService: NetworkServiceInterface) {
     suspend fun getData(
         username: String,
         password: String,
-        forceLogin: Boolean
+        forceLogin: Boolean,
+        timeout: Boolean = false
     ): Result.LoginResult {
 
         if (username == "" || password == "") {
             return Result.LoginResult.Error("Username or password is empty")
+        }
+        if (timeout && (System.currentTimeMillis() - networkService.lastTimeGotData) < 60000) {
+            return Result.LoginResult.Refresh("Data fresh enough, not refreshing")
         }
 
         try {

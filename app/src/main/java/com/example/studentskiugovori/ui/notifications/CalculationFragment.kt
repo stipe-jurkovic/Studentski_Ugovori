@@ -26,24 +26,21 @@ class CalculationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
 
         _binding = FragmentCalculationBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val composeView = binding.composeView
-        homeViewModel.getData()
 
-        homeViewModel.ugovori.observe(viewLifecycleOwner) {
-            composeView.setContent {
-                AppTheme(){ CalcWholeCompose() }
-            }
-            composeView.setViewCompositionStrategy(
-                ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
-                    viewLifecycleOwner
-                )
-            )
+        composeView.setContent {
+            AppTheme(){ CalcWholeCompose() }
         }
+        composeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
+                viewLifecycleOwner
+            )
+        )
+
         return root
     }
 

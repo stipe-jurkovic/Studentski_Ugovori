@@ -17,7 +17,7 @@ val appModule = module {
     single<NetworkServiceInterface> { NetworkService() }
     single { Repository(get()) }
     single { LoginViewModel(get()) }
-    single { HomeViewModel(get(), androidContext()) }
+    single { HomeViewModel(get()) }
     single { createSharedPreferences( androidContext() ) }
 }
 fun createSharedPreferences( applicationContext : Context): SharedPreferences {

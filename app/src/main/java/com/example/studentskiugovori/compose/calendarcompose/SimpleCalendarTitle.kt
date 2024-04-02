@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.studentskiugovori.R
-import com.example.studentskiugovori.compose.displayText
 import java.time.YearMonth
 
 @Composable
@@ -40,23 +39,41 @@ fun SimpleCalendarTitle(
     ) {
         CalendarNavigationIcon(
             icon = painterResource(id = R.drawable.ic_chevron_left),
-            contentDescription = "Previous",
+            contentDescription = "Prošli",
             onClick = goToPrevious,
         )
         Text(
             modifier = Modifier
                 .weight(1f)
                 .testTag("MonthTitle"),
-            text = currentMonth.displayText(),
+            text = numToMonth(currentMonth.monthValue) + currentMonth.year.toString(),
             fontSize = 22.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
         )
         CalendarNavigationIcon(
             icon = painterResource(id = R.drawable.ic_chevron_right),
-            contentDescription = "Next",
+            contentDescription = "Sljedeći",
             onClick = goToNext,
         )
+    }
+}
+
+fun numToMonth(num: Int): String {
+    return when (num) {
+        1 -> "Siječanj "
+        2 -> "Veljača "
+        3 -> "Ožujak "
+        4 -> "Travanj "
+        5 -> "Svibanj "
+        6 -> "Lipanj "
+        7 -> "Srpanj "
+        8 -> "Kolovoz "
+        9 -> "Rujan "
+        10 -> "Listopad "
+        11 -> "Studeni "
+        12 -> "Prosinac "
+        else -> "Nepoznato "
     }
 }
 

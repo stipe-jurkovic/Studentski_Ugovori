@@ -1,6 +1,5 @@
 package com.example.studentskiugovori.ui.home
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,11 +30,10 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        val sharedPref : SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
-        homeViewModel.getData()
-
         val composeView = binding.composeView
         binding.composeView.setBackgroundColor(resources.getColor(R.color.md_theme_background))
+
+        homeViewModel.getData()
 
         homeViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {

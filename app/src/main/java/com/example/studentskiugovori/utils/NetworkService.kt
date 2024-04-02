@@ -41,6 +41,7 @@ class NetworkService : NetworkServiceInterface {
     }
 
     override var lastTimeLoggedIn = 0L
+    override var lastTimeGotData = 0L
     private var SAMLResponse = ""
     private var simpleAuth = ""
     private var simpleID = ""
@@ -72,6 +73,8 @@ class NetworkService : NetworkServiceInterface {
             }
         }
         next = response.header("Location").toString()
+
+        println("GetSAMLRequest: ${response.code} ")
         return if (simpleID != "" && SC48 != "") {
             Result.NetworkCallResult.Success("SAMLRequest got!")
         } else {
@@ -105,6 +108,8 @@ class NetworkService : NetworkServiceInterface {
         val loginLink = doc2?.select("form.login-form")?.attr("action").toString()
         val authState = loginLink.split("AuthState=")[1]
 
+        println("GetSAMLResponse1: ${response2.code}")
+
         val formBody3 = FormBody.Builder()
             .add("username", username)
             .add("password", password)
@@ -119,11 +124,13 @@ class NetworkService : NetworkServiceInterface {
         val response3 = client.newCall(request3).execute()
         val doc3 = response3.body?.string()?.let { Jsoup.parse(it) }
         SAMLResponse = doc3?.select("input[name=SAMLResponse]")?.attr("value").toString()
+
+        println("GetSAMLResponse2: ${response3.code}")
         return if (SAMLResponse != "") {
             Result.NetworkCallResult.Success("SAMLResponse got!")
         } else {
             lastTimeLoggedIn = 0L
-            Result.NetworkCallResult.Error("Couldn't get SAMLResponse!")
+            Result.NetworkCallResult.Error("Login data incorrect. Couldn't get SAMLResponse!")
         }
     }
 
@@ -144,6 +151,8 @@ class NetworkService : NetworkServiceInterface {
         simpleAuth = response4.headers["Set-Cookie"]?.split(";")?.get(0) ?: ""
         url = doc4?.select("a[id=redirlink]")?.attr("href").toString()
 
+        println("SendSAMLToWebsc: ${response4.code}")
+
         return if (simpleAuth != "") {
             Result.NetworkCallResult.Success("SAMLResponse sent to scst!")
         } else {
@@ -159,6 +168,8 @@ class NetworkService : NetworkServiceInterface {
             .header("Cookie", "$simpleID; $SC48; $simpleAuth")
             .build()
         val response5 = client.newCall(request5).execute()
+
+        println("LoginFully: ${response5.code}")
 
         return if (response5.code == 302) {
             lastTimeLoggedIn = System.currentTimeMillis()
@@ -199,7 +210,10 @@ class NetworkService : NetworkServiceInterface {
         val response6 = client.newCall(request6).execute()
         val doc6 = response6.body?.string()
 
+        println("GetUgovoriData: ${response6.code}")
+
         return if (doc6 != "") {
+            lastTimeGotData = System.currentTimeMillis()
             Result.NetworkCallResult.Success(doc6.toString())
         } else {
             lastTimeLoggedIn = 0L

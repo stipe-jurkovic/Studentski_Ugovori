@@ -3,10 +3,10 @@ package com.example.studentskiugovori.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +36,6 @@ import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -45,6 +44,7 @@ import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -118,7 +118,11 @@ fun CalcCompose(): CalendarDay? {
         )
         HorizontalCalendar(state = state, dayContent = { day ->
             Day(day, isSelected = selection == day) { clicked ->
-                selection = if (clicked == selection) { null } else { clicked }
+                selection = if (clicked == selection) {
+                    null
+                } else {
+                    clicked
+                }
             }
         }, userScrollEnabled = false, monthHeader = {
             DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
@@ -171,7 +175,7 @@ fun Day(
     val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
     val daysWorked = homeViewModel.totalPerDay.collectAsState()
 
-    Box(
+    Column(
         modifier = Modifier
             .aspectRatio(1f)  // This is important for square sizing!
             .padding(2.dp)
@@ -180,17 +184,29 @@ fun Day(
                 color = if (isSelected) selectedItemColor else Color.Transparent,
             )
             .background(color = MaterialTheme.colorScheme.tertiaryContainer)
-            .clickable { onClick(day) }, contentAlignment = Alignment.Center
+            .clickable { onClick(day) },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = day.date.dayOfMonth.toString(),
+            color = textColor,
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(end = 4.dp, top = 2.dp)
+        )
+
         Column(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(text = day.date.dayOfMonth.toString(), color = textColor)
             when (day.position) {
                 DayPosition.MonthDate -> if (daysWorked.value[day.date] != null) {
-                    Text(text = (daysWorked.value[day.date].toString() + " €") ?: "")
+                    Text(
+                        text = (daysWorked.value[day.date]?.round(MathContext(3)).toString() + " €")
+                            ?: ""
+                    )
                 } else {
                     Text(text = "")
                 }

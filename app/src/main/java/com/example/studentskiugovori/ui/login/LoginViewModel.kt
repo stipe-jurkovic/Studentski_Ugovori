@@ -37,6 +37,12 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                     _loginSuccess.postValue(false)
                     _showLoading.postValue(false)
                 }
+                is Result.LoginResult.Refresh -> {
+                    _loginSuccess.postValue(true)
+                    delay(100)
+                    _loginSuccess.postValue(false)
+                    _showLoading.postValue(false)
+                }
                 is Result.LoginResult.Error -> {
                     _error.postValue(true)
                     _loginSuccess.postValue(false)
