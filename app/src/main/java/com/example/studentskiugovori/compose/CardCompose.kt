@@ -73,7 +73,7 @@ fun CardCompose(cardData: CardData = CardData()) {
             )
             {
                 Text(
-                    text = "Trenutna zarada: " + cardData.sum + " €",
+                    text = "Ukupna zarada: " + cardData.sum + " €",
                     color = Color.White,
                     fontSize = 20.sp
                 )

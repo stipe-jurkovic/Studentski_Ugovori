@@ -7,10 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.studentskiugovori.model.Repository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import com.example.studentskiugovori.utils.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginViewModel(private val repository: Repository) : ViewModel() {
 
@@ -25,7 +25,11 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
         _showLoading.postValue(true)
 
         viewModelScope.launch(Dispatchers.IO) {
-            when (repository.getData(username, password, true)) {
+            when (repository.getData(
+                username = username,
+                password = password,
+                forceLogin = true
+            )) {
                 is Result.LoginResult.Success -> {
                     sharedPreferences.edit().putString("username", username).apply()
                     sharedPreferences.edit().putString("password", password).apply()
@@ -34,12 +38,14 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                     _loginSuccess.postValue(false)
                     _showLoading.postValue(false)
                 }
+
                 is Result.LoginResult.Refresh -> {
                     _loginSuccess.postValue(true)
                     delay(100)
                     _loginSuccess.postValue(false)
                     _showLoading.postValue(false)
                 }
+
                 is Result.LoginResult.Error -> {
                     _loginSuccess.postValue(false)
                     _showLoading.postValue(false)

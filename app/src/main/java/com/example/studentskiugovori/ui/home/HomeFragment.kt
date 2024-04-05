@@ -21,18 +21,18 @@ class HomeFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         val composeView = binding.composeView
-        //binding.composeView.setBackgroundColor(resources.getColor(R.color.md_theme_background))
+        binding.composeView.setBackgroundColor(resources.getColor(R.color.md_theme_background))
 
         mainViewModel.getData()
 

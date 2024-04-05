@@ -53,6 +53,10 @@ class NetworkService : NetworkServiceInterface {
         lastTimeLoggedIn = 0L
     }
 
+    override fun resetLastTimeGotData() {
+        lastTimeGotData = 0L
+    }
+
     override fun getSamlRequest(): Result.NetworkCallResult<String> {
 
         val request = Request.Builder()

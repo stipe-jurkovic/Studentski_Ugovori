@@ -9,6 +9,8 @@ interface NetworkServiceInterface {
 
         fun resetLastTimeLoggedIn()
 
+        fun resetLastTimeGotData()
+
         fun getSamlRequest(): Result.NetworkCallResult<String>
 
         fun getSamlResponse(username: String, password: String): Result.NetworkCallResult<String>
