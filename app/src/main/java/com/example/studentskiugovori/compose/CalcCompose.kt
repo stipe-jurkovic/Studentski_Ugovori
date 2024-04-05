@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,10 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
 import com.example.studentskiugovori.compose.calendarcompose.clickable
 import com.example.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
-import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -81,8 +80,8 @@ fun CalcCompose(): CalendarDay? {
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
-    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
-    val daysWorked = homeViewModel.daysWorked.collectAsState().value
+    val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
+    val daysWorked = mainViewModel.daysWorked.collectAsState().value
 
 
     val state = rememberCalendarState(
@@ -135,7 +134,7 @@ fun CalcCompose(): CalendarDay? {
         }
         Column {
             var sum = BigDecimal(0)
-            homeViewModel.totalPerDay.collectAsState().value.forEach {
+            mainViewModel.totalPerDay.collectAsState().value.forEach {
                 if (it.key.month == visibleMonth.yearMonth.month) {
                     sum += it.value
                 }
@@ -172,8 +171,8 @@ fun Day(
         DayPosition.MonthDate -> Color.Unspecified
         DayPosition.InDate, DayPosition.OutDate -> inActiveTextColor
     }
-    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
-    val daysWorked = homeViewModel.totalPerDay.collectAsState()
+    val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
+    val daysWorked = mainViewModel.totalPerDay.collectAsState()
 
     Column(
         modifier = Modifier

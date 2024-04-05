@@ -24,26 +24,26 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.R
+import com.example.studentskiugovori.Status
 import com.example.studentskiugovori.compose.CardCompose
 import com.example.studentskiugovori.compose.CircularIndicator
 import com.example.studentskiugovori.model.dataclasses.CardData
-import com.example.studentskiugovori.ui.home.HomeViewModel
-import com.example.studentskiugovori.ui.home.Status
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeCompose(homeViewModel: HomeViewModel) {
+fun HomeCompose(mainViewModel: MainViewModel) {
 
-    val loadedTxt = homeViewModel.loadedTxt.observeAsState().value
-    val snackbarHostState = remember { homeViewModel.snackbarHostState }
-    val isRefreshing = homeViewModel.isRefreshing.observeAsState().value
+    val loadedTxt = mainViewModel.loadedTxt.observeAsState().value
+    val snackbarHostState = remember { mainViewModel.snackbarHostState }
+    val isRefreshing = mainViewModel.isRefreshing.observeAsState().value
     val pullRefreshState = isRefreshing?.let {
         rememberPullRefreshState(it, {
-            homeViewModel.getData(true)
+            mainViewModel.getData(true)
         })
     }
-    val ugovori = homeViewModel.ugovori.observeAsState().value
+    val ugovori = mainViewModel.ugovori.observeAsState().value
 
     pullRefreshState?.let {
         Modifier
@@ -76,10 +76,10 @@ fun HomeCompose(homeViewModel: HomeViewModel) {
                         verticalArrangement = Arrangement.Top
                     ) {
                         item {
-                            CardCompose(homeViewModel.cardData.observeAsState().value ?: CardData())
+                            CardCompose(mainViewModel.cardData.observeAsState().value ?: CardData())
                             Row {
                                 Text(
-                                    text = "Generirano: ${homeViewModel.generated.value ?: ""}",
+                                    text = "Generirano: ${mainViewModel.generated.value ?: ""}",
                                     Modifier.padding(8.dp, 4.dp)
                                 )
                             }

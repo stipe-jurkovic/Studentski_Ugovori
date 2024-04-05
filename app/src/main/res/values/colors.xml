@@ -1,7 +1,6 @@
-
 <resources>
-    <color name="seed">#0052a3</color>
-    <color name="md_theme_primary">#1B5EAF</color>
+    <color name="seed">#0f5eb4</color>
+    <color name="md_theme_primary">#0D5DB3</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_primaryContainer">#D6E3FF</color>
     <color name="md_theme_onPrimaryContainer">#001B3D</color>
@@ -28,7 +27,7 @@
     <color name="md_theme_inverseSurface">#003547</color>
     <color name="md_theme_inversePrimary">#A9C7FF</color>
     <color name="md_theme_shadow">#000000</color>
-    <color name="md_theme_surfaceTint">#1B5EAF</color>
-    <color name="md_theme_outlineVariant">#C4C6D0</color>
+    <color name="md_theme_surfaceTint">#0D5DB3</color>
+    <color name="md_theme_outlineVariant">#C4C6CF</color>
     <color name="md_theme_scrim">#000000</color>
 </resources>

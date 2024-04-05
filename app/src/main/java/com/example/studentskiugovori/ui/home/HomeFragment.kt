@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.compose.AppTheme
 import com.example.studentskiugovori.R
 import com.example.studentskiugovori.databinding.FragmentHomeBinding
@@ -26,18 +27,18 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+        val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         val composeView = binding.composeView
-        binding.composeView.setBackgroundColor(resources.getColor(R.color.md_theme_background))
+        //binding.composeView.setBackgroundColor(resources.getColor(R.color.md_theme_background))
 
-        homeViewModel.getData()
+        mainViewModel.getData()
 
-        homeViewModel.ugovori.observe(viewLifecycleOwner) {
+        mainViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
-                AppTheme(){ HomeCompose(homeViewModel) }
+                AppTheme(){ HomeCompose(mainViewModel) }
             }
             composeView.setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(

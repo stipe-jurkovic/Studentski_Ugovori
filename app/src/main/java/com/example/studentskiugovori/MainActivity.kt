@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -24,8 +26,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //activity main xml needs fixing
 
         val sharedPref :SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
 
@@ -55,5 +55,23 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.md_theme_background)))
 
         }
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_top, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.logOut -> {
+                val sharedPref :SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
+                sharedPref.edit().putString("username", "").apply()
+                sharedPref.edit().putString("password", "").apply()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

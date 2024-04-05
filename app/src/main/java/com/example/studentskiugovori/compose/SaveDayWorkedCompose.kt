@@ -27,10 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.model.Result.Result
 import com.example.studentskiugovori.model.data.calculateDayEarning
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
-import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
@@ -55,7 +55,7 @@ fun CalcWholeCompose() {
     var showBottomSheet by remember { mutableStateOf(false) }
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
 
-    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+    val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
     Scaffold(
         floatingActionButton = {
@@ -121,12 +121,12 @@ fun CalcWholeCompose() {
                                             5.3.toBigDecimal()
                                         )) {
                                             is Result.Success ->
-                                                homeViewModel.addDayWorked(
+                                                mainViewModel.addDayWorked(
                                                     selectionDate,
                                                     result.data
                                                 )
 
-                                            is Result.Error -> homeViewModel.addDayWorked(
+                                            is Result.Error -> mainViewModel.addDayWorked(
                                                 selectionDate,
                                                 WorkedHours(
                                                     UUID.randomUUID(),

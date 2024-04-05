@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
         }
-        supportActionBar?.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.md_theme_background)))
+        supportActionBar?.hide()
         loginViewModel.loginSuccess.observe(this) {
             if (it) {
                 startActivity(Intent(this, MainActivity::class.java))

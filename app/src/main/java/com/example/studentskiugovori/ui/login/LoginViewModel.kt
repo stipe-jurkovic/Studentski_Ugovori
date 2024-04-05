@@ -18,9 +18,6 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
     private val _loginSuccess = MutableLiveData<Boolean>().apply { value = false }
     val loginSuccess: LiveData<Boolean> = _loginSuccess
 
-    private val _error = MutableLiveData<Boolean>().apply { value = true }
-    val showError: LiveData<Boolean> = _error
-
     private val _showLoading = MutableLiveData<Boolean>().apply { value = false }
     val showLoading: LiveData<Boolean> = _showLoading
 
@@ -44,7 +41,6 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                     _showLoading.postValue(false)
                 }
                 is Result.LoginResult.Error -> {
-                    _error.postValue(true)
                     _loginSuccess.postValue(false)
                     _showLoading.postValue(false)
                     snackbarHostState.showSnackbar("Pogrešno korisničko ime ili lozinka")

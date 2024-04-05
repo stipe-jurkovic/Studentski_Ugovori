@@ -53,6 +53,7 @@ import com.example.studentskiugovori.model.Repository
 import com.example.studentskiugovori.ui.login.LoginViewModel
 import com.example.studentskiugovori.utils.NetworkService
 import android.graphics.Canvas
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.draw.clip
 
@@ -103,6 +104,8 @@ fun LoginCompose(
                 .fillMaxSize()
         ) {
             Sandbox()
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Studentski Ugovori", style = MaterialTheme.typography.h5)
             Spacer(modifier = Modifier.height(16.dp))
             Column {
                 OutlinedTextField(
@@ -113,7 +116,7 @@ fun LoginCompose(
                     placeholder = { Text("Unesi email") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
-                space()
+                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = textPass,
                     onValueChange = { textPass = it },
@@ -136,7 +139,7 @@ fun LoginCompose(
                     else PasswordVisualTransformation()
                 )
             }
-            space()
+            Spacer(modifier = Modifier.height(8.dp))
             if (loginViewModel.showLoading.observeAsState().value == true) {
                 CircularProgressIndicator(
                     modifier = Modifier.width(40.dp),
@@ -157,27 +160,6 @@ fun LoginCompose(
             }
             Spacer(modifier = Modifier.height(70.dp))
         }
-    }
-}
-
-@Composable
-fun space() {
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-fun adaptiveIconPainterResource(@DrawableRes id: Int): Painter {
-    val res = LocalContext.current.resources
-    val theme = LocalContext.current.theme
-
-
-    // Android O supports adaptive icons, try loading this first (even though this is least likely to be the format).
-    val adaptiveIcon = ResourcesCompat.getDrawable(res, id, theme) as? AdaptiveIconDrawable
-    return if (adaptiveIcon != null) {
-        BitmapPainter(adaptiveIcon.toBitmap().asImageBitmap())
-    } else {
-        // We couldn't load the drawable as an Adaptive Icon, just use painterResource
-        painterResource(id)
     }
 }
 

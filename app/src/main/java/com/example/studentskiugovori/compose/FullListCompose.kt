@@ -21,23 +21,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.studentskiugovori.ui.home.HomeViewModel
-import com.example.studentskiugovori.ui.home.Status
+import com.example.studentskiugovori.MainViewModel
+import com.example.studentskiugovori.Status
 import com.example.studomatisvu.compose.UgovorCompose
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FullListCompose(homeViewModel: HomeViewModel) {
+fun FullListCompose(mainViewModel: MainViewModel) {
 
-    val loadedTxt = homeViewModel.loadedTxt.observeAsState().value
-    val snackbarHostState = remember { homeViewModel.snackbarHostState }
-    val isRefreshing = homeViewModel.isRefreshing.observeAsState().value
+    val loadedTxt = mainViewModel.loadedTxt.observeAsState().value
+    val snackbarHostState = remember { mainViewModel.snackbarHostState }
+    val isRefreshing = mainViewModel.isRefreshing.observeAsState().value
     val pullRefreshState = isRefreshing?.let {
         rememberPullRefreshState(it, {
-            homeViewModel.getData(true)
+            mainViewModel.getData(true)
         })
     }
-    val ugovori = homeViewModel.ugovori.observeAsState().value
+    val ugovori = mainViewModel.ugovori.observeAsState().value
 
     pullRefreshState?.let {
         Modifier
@@ -70,7 +70,7 @@ fun FullListCompose(homeViewModel: HomeViewModel) {
                     ) {
                         Row {
                             Text(
-                                text = "Generirano: ${homeViewModel.generated.value ?: ""}",
+                                text = "Generirano: ${mainViewModel.generated.value ?: ""}",
                                 Modifier.padding(8.dp, 4.dp)
                             )
                         }

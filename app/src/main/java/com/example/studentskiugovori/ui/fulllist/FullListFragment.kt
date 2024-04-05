@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.compose.AppTheme
 import com.example.studentskiugovori.compose.FullListCompose
 import com.example.studentskiugovori.databinding.FragmentFulllistBinding
-import com.example.studentskiugovori.ui.home.HomeViewModel
 import org.koin.java.KoinJavaComponent
 
 class FullListFragment : Fragment() {
@@ -27,7 +27,7 @@ class FullListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+        val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
         _binding = FragmentFulllistBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -38,9 +38,9 @@ class FullListFragment : Fragment() {
         val composeView = binding.composeView
         //homeViewModel.getData()
 
-        homeViewModel.ugovori.observe(viewLifecycleOwner) {
+        mainViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
-                AppTheme(){ FullListCompose(homeViewModel) }
+                AppTheme(){ FullListCompose(mainViewModel) }
             }
             composeView.setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(

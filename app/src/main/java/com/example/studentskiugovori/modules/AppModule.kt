@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.model.Repository
-import com.example.studentskiugovori.ui.home.HomeViewModel
 import com.example.studentskiugovori.ui.login.LoginViewModel
 import com.example.studentskiugovori.utils.NetworkService
 import com.example.studentskiugovori.utils.NetworkServiceInterface
@@ -17,7 +17,7 @@ val appModule = module {
     single<NetworkServiceInterface> { NetworkService() }
     single { Repository(get()) }
     single { LoginViewModel(get()) }
-    single { HomeViewModel(get()) }
+    single { MainViewModel(get()) }
     single { createSharedPreferences( androidContext() ) }
 }
 fun createSharedPreferences( applicationContext : Context): SharedPreferences {

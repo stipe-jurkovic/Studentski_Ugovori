@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
-import com.example.studentskiugovori.ui.home.HomeViewModel
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -48,7 +48,7 @@ fun WorkedItemCompose(
     )
 ) {
     val textModifier = Modifier.padding(10.dp)
-    val homeViewModel: HomeViewModel by KoinJavaComponent.inject(HomeViewModel::class.java)
+    val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
     Row(
         modifier = Modifier
@@ -73,7 +73,7 @@ fun WorkedItemCompose(
             Text(text = workedHours.hours.toString(), textModifier)
             VerticalDivider()
             Text(text = workedHours.moneyEarned.toString() + " €", textModifier)
-            Button(onClick = { homeViewModel.deleteWorkedItem(workedHours) },
+            Button(onClick = { mainViewModel.deleteWorkedItem(workedHours) },
                 modifier = Modifier.wrapContentWidth().defaultMinSize(minWidth = 2.dp),
                 shape = RectangleShape,
                 contentPadding = PaddingValues(0.dp),
