@@ -1,4 +1,3 @@
-
 package com.example.studentskiugovori
 
 import android.content.SharedPreferences
@@ -44,9 +43,12 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     private val _isRefreshing: MutableLiveData<Boolean> = MutableLiveData(false)
     private val _ugovori = MutableLiveData<List<Ugovor>>().apply { value = emptyList() }
     private val _cardData = MutableLiveData<CardData>().apply { value = CardData() }
-    private val _daysWorked: MutableStateFlow<Map<LocalDate, List<WorkedHours>>> = MutableStateFlow(mapOf())
+    private val _daysWorked: MutableStateFlow<Map<LocalDate, List<WorkedHours>>> =
+        MutableStateFlow(mapOf())
     private val _generated = MutableLiveData<String>().apply { value = "" }
-    private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> = MutableStateFlow(mapOf())
+    private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> =
+        MutableStateFlow(mapOf())
+    private val _hourlyPay: MutableLiveData<BigDecimal> = MutableLiveData(BigDecimal(0))
 
     val loadedTxt: LiveData<Status> = _loadedTxt
     val isRefreshing: LiveData<Boolean> = _isRefreshing
@@ -55,6 +57,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val cardData: LiveData<CardData> = _cardData
     val daysWorked: StateFlow<Map<LocalDate, List<WorkedHours>>> = _daysWorked
     val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
+    val hourlyPay: LiveData<BigDecimal> = _hourlyPay
 
     init {
         realm.getWorkedHours().getWorkedHours().forEach() {
@@ -85,6 +88,12 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                     ).format(System.currentTimeMillis())
                     _generated.postValue(rn)
                     _ugovori.postValue(result.data as List<Ugovor>?)
+                    _hourlyPay.postValue(result.data.first {
+                        it.STATUSNAZIV?.contains(
+                            "Izdan",
+                            ignoreCase = true
+                        ) == true
+                    }.CIJENAWEB?.toBigDecimal() ?: BigDecimal(5.25))
                     _isRefreshing.postValue(false)
                     _loadedTxt.postValue(Status.FETCHED)
                     delay(30)
@@ -168,6 +177,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             ),
             BigDecimal(workedHoursRealm.moneyEarned).round(MathContext(3)),
             BigDecimal(workedHoursRealm.hours).round(MathContext(3)),
+            BigDecimal(workedHoursRealm.hourlyPay).round(MathContext(3)),
             workedHoursRealm.completed
         )
     }
@@ -179,6 +189,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
 
 }
+
 enum class Status {
     FETCHING,
     FETCHED,

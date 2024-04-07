@@ -16,6 +16,7 @@ open class WorkedHoursRealm(
     var timeEnd: String,
     var moneyEarned: Double,
     var hours: Double = 0.0,
+    var hourlyPay: Double,
     var completed: Boolean = true,
 ) : RealmObject() {
     constructor() : this(
@@ -23,6 +24,7 @@ open class WorkedHoursRealm(
         LocalDate.now().toEpochDay(),
         "${LocalTime.now().hour}:${LocalTime.now().minute}",
         "${LocalTime.now().hour}:${LocalTime.now().minute}",
+        0.0,
         0.0,
         0.0,
         false

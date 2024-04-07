@@ -1,15 +1,15 @@
 package com.example.studentskiugovori.model.data
 
+import com.example.studentskiugovori.model.Result.Result
 import com.example.studentskiugovori.model.dataclasses.CardData
-import com.example.studentskiugovori.model.dataclasses.WorkedHours
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.model.dataclasses.UgovoriData
+import com.example.studentskiugovori.model.dataclasses.WorkedHours
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.LocalTime
-import com.example.studentskiugovori.model.Result.Result
 import java.util.UUID
 
 
@@ -121,5 +121,15 @@ fun calculateDayEarning(
             .setScale(2, RoundingMode.HALF_UP)
     }
 
-    return Result.Success(WorkedHours(UUID.randomUUID() ,date, startTime, endTime, result, (overtime + time).stripTrailingZeros()))
+    return Result.Success(
+        WorkedHours(
+            UUID.randomUUID(),
+            date,
+            startTime,
+            endTime,
+            result,
+            (overtime + time).stripTrailingZeros(),
+            hourly
+        )
+    )
 }

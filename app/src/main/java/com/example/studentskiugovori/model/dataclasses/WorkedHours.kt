@@ -12,5 +12,6 @@ data class WorkedHours(
     var timeEnd: LocalTime,
     var moneyEarned: BigDecimal,
     var hours: BigDecimal = BigDecimal.ZERO,
+    var hourlyPay: BigDecimal,
     var completed: Boolean = true,
 )

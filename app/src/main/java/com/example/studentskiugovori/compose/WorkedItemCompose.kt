@@ -44,6 +44,7 @@ fun WorkedItemCompose(
         LocalTime.now(),
         BigDecimal(10),
         BigDecimal(10),
+        BigDecimal(10),
         true
     )
 ) {
@@ -56,25 +57,29 @@ fun WorkedItemCompose(
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background),
     ) {
-        VerticalDivider(color = Color.Blue, thickness = 5.dp)
+        VerticalDivider(color = Color.Blue, thickness = 3.dp)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = workedHours.date.toString(), textModifier)
+            Text(text = workedHours.date.format(DateTimeFormatter.ofPattern("dd.MM")), textModifier)
             VerticalDivider()
             Text(
-                text = "${workedHours.timeStart.format(DateTimeFormatter.ofPattern("HH:mm"))} - ${
-                          workedHours.timeEnd.format(DateTimeFormatter.ofPattern("HH:mm"))
+                text = "${workedHours.timeStart.format(DateTimeFormatter.ofPattern("H:mm"))} - ${
+                          workedHours.timeEnd.format(DateTimeFormatter.ofPattern("H:mm"))
                 }", textModifier
             )
             VerticalDivider()
             Text(text = workedHours.hours.toString(), textModifier)
             VerticalDivider()
+            Text(text = workedHours.hourlyPay.toString() + " €", textModifier)
+            VerticalDivider()
             Text(text = workedHours.moneyEarned.toString() + " €", textModifier)
             Button(onClick = { mainViewModel.deleteWorkedItem(workedHours) },
-                modifier = Modifier.wrapContentWidth().defaultMinSize(minWidth = 2.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .defaultMinSize(minWidth = 2.dp),
                 shape = RectangleShape,
                 contentPadding = PaddingValues(0.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,

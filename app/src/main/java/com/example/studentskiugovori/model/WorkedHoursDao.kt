@@ -23,6 +23,7 @@ class WorkedHoursDao (private val realm: Realm) {
                 "${workedHour.timeEnd.hour}:${ workedHour.timeEnd.minute }",
                 workedHour.moneyEarned.toDouble(),
                 workedHour.hours.toDouble(),
+                workedHour.hourlyPay.toDouble(),
                 workedHour.completed
             )
             it.insert(item)
