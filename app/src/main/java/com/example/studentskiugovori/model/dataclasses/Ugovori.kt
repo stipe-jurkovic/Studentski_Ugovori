@@ -12,16 +12,9 @@ data class Ugovori(
     val POSAONAZIV: List<String?>,
     val NETO: List<Double?>,
     val ISPLATANETO: List<Double?>,
-    val ISPLATA: List<String?>,
     val VALUTAUNOS: List<String?>,
     val RADIOODWEB: List<String?>,
     val RADIODOWEB: List<String?>,
     val CIJENAWEB: List<Double?>,
-    val JM: List<String?>,
-    val MJESTOOBAVLJANJA: List<String?>,
-    val STATUSWEB: List<Int?>,
-    val UPUCENWEB: List<Int?>,
-    val RAD: List<String?>,
-    val RACUN: List<Int?>,
-    val DATUMRACUNA: List<String?>
+    val STATUSWEB: List<Int?>
 )

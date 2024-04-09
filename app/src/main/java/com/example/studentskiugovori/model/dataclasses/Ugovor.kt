@@ -11,16 +11,9 @@ data class Ugovor(
     val POSAONAZIV: String? = "",
     val NETO: Double? = 0.0,
     val ISPLATANETO: Double? = 0.0,
-    val ISPLATA: String? = "",
     val VALUTAUNOS: String? = "",
     val RADIOODWEB: String? = "",
     val RADIODOWEB: String? = "",
     val CIJENAWEB: Double? = 0.0,
-    val JM: String? = "",
-    val MJESTOOBAVLJANJA: String? = "",
-    val STATUSWEB: Int? = 0,
-    val UPUCENWEB: Int? = 0,
-    val RAD: String? = "",
-    val RACUN: Int? = 0,
-    val DATUMRACUNA: String? = "",
+    val STATUSWEB: Int? = 0
 )

@@ -41,30 +41,6 @@ import com.google.android.material.color.MaterialColors
 @Preview
 @Composable
 fun UgovorPreview() {
-    /*UgovorComposeMini(
-        ugovor = Ugovor(
-            GODINA = 2021,
-            UGOVOR = 19288,
-            STATUSNAZIV = " Ispl - Plać",
-            PARTNERNAZIVWEB = "STUDENTSKI CENTAR SPLIT",
-            PARTNERNAZIV = "STUDENTSKI CENTAR SPLIT",
-            POSAONAZIV = "ISPOMOĆ U KUHINJI",
-            NETO = 1110.0,
-            ISPLATANETO = 1110.0,
-            ISPLATA = "05.11.2021",
-            VALUTAUNOS = "KN",
-            RADIOODWEB = "14.10.2021",
-            RADIODOWEB = "31.10.2021",
-            CIJENAWEB = 30.0,
-            JM = "h",
-            MJESTOOBAVLJANJA = "KAMPUS",
-            STATUSWEB = 3,
-            UPUCENWEB = 2,
-            RAD = null,
-            RACUN = 21860,
-            DATUMRACUNA = "05.11.2021"
-        )
-    )*/
     var showFull : Boolean by remember { mutableStateOf (false) }
     Card(onClick = { showFull = !showFull }, modifier = Modifier
         .padding(0.dp)
@@ -80,18 +56,11 @@ fun UgovorPreview() {
                     POSAONAZIV = "ISPOMOĆ U KUHINJI",
                     NETO = 1110.0,
                     ISPLATANETO = 1110.0,
-                    ISPLATA = "05.11.2021",
                     VALUTAUNOS = "KN",
                     RADIOODWEB = "14.10.2021",
                     RADIODOWEB = "31.10.2021",
                     CIJENAWEB = 30.0,
-                    JM = "h",
-                    MJESTOOBAVLJANJA = "KAMPUS",
                     STATUSWEB = 3,
-                    UPUCENWEB = 2,
-                    RAD = null,
-                    RACUN = 21860,
-                    DATUMRACUNA = "05.11.2021"
                 )
             )
         } else {
@@ -105,18 +74,11 @@ fun UgovorPreview() {
                     POSAONAZIV = "ISPOMOĆ U KUHINJI",
                     NETO = 1110.0,
                     ISPLATANETO = 1110.0,
-                    ISPLATA = "05.11.2021",
                     VALUTAUNOS = "KN",
                     RADIOODWEB = "14.10.2021",
                     RADIODOWEB = "31.10.2021",
                     CIJENAWEB = 30.0,
-                    JM = "h",
-                    MJESTOOBAVLJANJA = "KAMPUS",
                     STATUSWEB = 3,
-                    UPUCENWEB = 2,
-                    RAD = null,
-                    RACUN = 21860,
-                    DATUMRACUNA = "05.11.2021"
                 )
             )
         }
@@ -175,13 +137,12 @@ fun UgovorComposeFull(ugovor: Ugovor) {
             UgovorText("Posao: ", ugovor.POSAONAZIV ?: "")
             UgovorText(
                 "Satnica: ",
-                ugovor.CIJENAWEB.toString() + " " + ugovor.VALUTAUNOS + "/" + ugovor.JM
+                ugovor.CIJENAWEB.toString() + " " + ugovor.VALUTAUNOS
             )
             UgovorText(
                 "Neto (Isplata neto): ",
                 (ugovor.NETO.toString() ?: "") + " (" + (ugovor.ISPLATANETO.toString() ?: "") + ")" + " " + ugovor.VALUTAUNOS
             )
-            UgovorText("Datum isplate: ", ugovor.ISPLATA ?: "")
 
             if ((ugovor.RADIOODWEB?.split(".")?.get(2) ?: "") == (ugovor.RADIODOWEB?.split(".")
                     ?.get(2) ?: "")
@@ -193,10 +154,6 @@ fun UgovorComposeFull(ugovor: Ugovor) {
             } else {
                 UgovorText("Radio: ", (ugovor.RADIOODWEB + " - " + ugovor.RADIODOWEB) ?: "")
             }
-
-            UgovorText("Mjesto obavljanja: ", ugovor.MJESTOOBAVLJANJA ?: "")
-            UgovorText("Račun: ", ugovor.RACUN.toString() ?: "")
-            UgovorText("Datum racuna: ", ugovor.DATUMRACUNA ?: "")
         }
     }
 }
@@ -230,12 +187,11 @@ fun UgovorComposeMini(ugovor: Ugovor) {
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
-            if(ugovor.ISPLATA !=""){
+            if(ugovor.STATUSNAZIV?.contains("Ispl") == true){
             UgovorText(
                 "Neto (Isplata neto): ",
                 (ugovor.NETO.toString() ?: "") + " (" + (ugovor.ISPLATANETO.toString() ?: "") + ")" + " " + ugovor.VALUTAUNOS
             )
-                UgovorText("Datum isplate: ", ugovor.ISPLATA ?: "")
             }
 
         }

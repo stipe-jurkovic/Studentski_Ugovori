@@ -27,18 +27,11 @@ fun parseUgovore(data: String): List<Ugovor> {
                 ugovoriData.rows.POSAONAZIV[i],
                 ugovoriData.rows.NETO[i],
                 ugovoriData.rows.ISPLATANETO[i],
-                ugovoriData.rows.ISPLATA[i].toString().dropLast(9),
                 ugovoriData.rows.VALUTAUNOS[i],
                 ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9),
                 ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9),
                 ugovoriData.rows.CIJENAWEB[i],
-                ugovoriData.rows.JM[i],
-                ugovoriData.rows.MJESTOOBAVLJANJA[i],
-                ugovoriData.rows.STATUSWEB[i],
-                ugovoriData.rows.UPUCENWEB[i],
-                ugovoriData.rows.RAD[i],
-                ugovoriData.rows.RACUN[i],
-                ugovoriData.rows.DATUMRACUNA[i].toString().dropLast(9)
+                ugovoriData.rows.STATUSWEB[i]
             )
         )
     }
@@ -50,7 +43,7 @@ fun calculateEarningsAndGetNumbers(list: List<Ugovor>): CardData {
     var numOfPaid = 0
     var numOfIzdanih = 0
     for (ugovor in list) {
-        if (ugovor.ISPLATA?.contains(".") == true && ugovor.STATUSNAZIV?.contains("Ispl") == true && ugovor.NETO != null) {
+        if (ugovor.STATUSNAZIV?.contains("Ispl") == true && ugovor.NETO != null) {
             if (ugovor.VALUTAUNOS == "EUR") {
                 sum += ugovor.NETO
             } else if (ugovor.VALUTAUNOS == "KN") {
