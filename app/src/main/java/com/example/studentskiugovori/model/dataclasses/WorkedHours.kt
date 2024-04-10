@@ -15,3 +15,11 @@ data class WorkedHours(
     var hourlyPay: BigDecimal,
     var completed: Boolean = true,
 )
+fun WorkedHours.toStringExport(): String {
+    return  "Datum:        $date\n" +
+            "Početak:      $timeStart\n" +
+            "Kraj:         $timeEnd\n" +
+            "Zarada:       $moneyEarned\n" +
+            "Broj sati:    $hours\n" +
+            "Satnica:      $hourlyPay\n"
+}

@@ -2,6 +2,7 @@ package com.example.studentskiugovori
 
 import android.content.SharedPreferences
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,9 +14,10 @@ import com.example.studentskiugovori.model.dataclasses.CardData
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
 import com.example.studentskiugovori.model.dataclasses.WorkedHoursRealm
-import com.example.studentskiugovori.utils.Result.ParseResult
+import com.example.studentskiugovori.model.dataclasses.toStringExport
 import com.example.studentskiugovori.model.getWorkedHours
 import com.example.studentskiugovori.utils.Result
+import com.example.studentskiugovori.utils.Result.ParseResult
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import io.realm.Realm
@@ -86,7 +88,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                 timeout = !refresh
             )) {
                 is Result.LoginResult.Success -> {
-                    when (val parsedData = parseUgovore(result.data as String)){
+                    when (val parsedData = parseUgovore(result.data as String)) {
                         is ParseResult.Success -> {
                             val rn = SimpleDateFormat(
                                 "dd.MM.yyyy HH:mm:ss",
@@ -96,7 +98,8 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                             _ugovori.postValue(parsedData.data as List<Ugovor>?)
 
                             _hourlyPay.postValue(parsedData.data.filter {
-                                it.STATUSNAZIV?.contains("Izdan", ignoreCase = true) == true }.map{
+                                it.STATUSNAZIV?.contains("Izdan", ignoreCase = true) == true
+                            }.map {
                                 it.CIJENAWEB?.toBigDecimal() ?: BigDecimal(0)
                             })
 
@@ -106,6 +109,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                             _loadedTxt.postValue(Status.FETCHED_NEW)
                             _cardData.postValue(calculateEarningsAndGetNumbers(parsedData.data))
                         }
+
                         is ParseResult.Error -> {
                             snackbarHostState.showSnackbar("Greška prilikom parsiranja podataka")
                             println(parsedData.error)
@@ -198,6 +202,22 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             BigDecimal(workedHoursRealm.hourlyPay).round(MathContext(3)),
             workedHoursRealm.completed
         )
+    }
+
+    fun getTextHours(): String {
+        var text = "Zarada po danima:\n\n"
+        daysWorked.value.toSortedMap().forEach { (date, workedHours) ->
+            workedHours.forEach {
+                text += it.toStringExport() + "------------------------\n"
+            }
+        }
+        text += "\n\nUkupna zarada:     "
+        var sum = BigDecimal(0)
+        totalPerDay.value.forEach {
+            sum += it.value
+        }
+        text += "$sum €"
+        return text
     }
 
     override fun onCleared() {

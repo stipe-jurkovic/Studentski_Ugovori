@@ -1,5 +1,9 @@
 package com.example.studentskiugovori.ui.calculation
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -175,18 +181,22 @@ fun CalcCompose(): CalendarDay? {
             Row(rowmodifier) {
                 Text("Broj odrađenih sati u ${numToMonth(currentMonth.monthValue)}: $hours")
             }
+            val context = LocalContext.current
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    copyToClipboard(context, mainViewModel.getTextHours())
+                    Toast.makeText(context, "Kopirano u međuspremnik", Toast.LENGTH_SHORT).show()
+                },
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier.padding(10.dp),
                 contentPadding = PaddingValues(10.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(R.drawable.download_minimalistic_svgrepo_com),
+                        painter = painterResource(R.drawable.copy_svgrepo_com__1_),
                         contentDescription = "Sati u txt formatu",
                         Modifier
-                            .size(24.dp)
+                            .width(24.dp)
                             .padding(end = 4.dp)
                     )
                     Text("Sati u txt formatu")
@@ -197,6 +207,17 @@ fun CalcCompose(): CalendarDay? {
     }
     return selection
 
+}
+
+fun copyToClipboard(context: Context, text: CharSequence) {
+    // Get the clipboard manager
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    // Create a ClipData object to hold the text
+    val clip = ClipData.newPlainText("Text", text)
+
+    // Set the data to the clipboard
+    clipboard.setPrimaryClip(clip)
 }
 
 
