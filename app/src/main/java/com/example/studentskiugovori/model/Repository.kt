@@ -3,6 +3,7 @@ package com.example.studentskiugovori.model
 import com.example.studentskiugovori.model.data.parseUgovore
 import com.example.studentskiugovori.utils.NetworkServiceInterface
 import com.example.studentskiugovori.utils.Result
+import kotlinx.coroutines.delay
 
 class Repository(private val networkService: NetworkServiceInterface) {
 
@@ -36,9 +37,10 @@ class Repository(private val networkService: NetworkServiceInterface) {
                 }
                 when (val result = networkService.loginFully()) {
                     is Result.NetworkCallResult.Success -> {}
-                    is Result.NetworkCallResult.Error -> Result.LoginResult.Error("Error getting data:${result.error}")
+                    is Result.NetworkCallResult.Error -> return Result.LoginResult.Error("Error getting data:${result.error}")
                 }
             }
+
             return when (val result = networkService.getUgovoriData()) {
                 is Result.NetworkCallResult.Success -> {
                     if (forceLogin) { networkService.resetLastTimeGotData() }

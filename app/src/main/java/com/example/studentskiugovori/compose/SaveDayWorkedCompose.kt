@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomSheetScaffold
@@ -29,6 +27,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.studentskiugovori.MainViewModel
@@ -47,6 +45,8 @@ import com.example.studentskiugovori.utils.Result.GenericResult
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
+import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalTime
 import java.util.UUID
 
@@ -87,9 +87,8 @@ fun CalcWholeCompose() {
                 if (showBottomSheet) {
                     val timePickStateStart = rememberTimePickerState(6, 0)
                     val timePickStateEnd = rememberTimePickerState(14, 0)
-                    val hourly = remember { mutableStateOf(mainViewModel.hourlyPay.value) }
-                    var hourlyText =
-                        remember { mutableStateOf(mainViewModel.hourlyPay.value.toString()) }
+                    val hourlyText = remember { mutableStateOf(mainViewModel.hourlyPay.value.toString()) }
+
                     ModalBottomSheet(
                         sheetState = sheetState,
                         onDismissRequest = { showBottomSheet = false }
@@ -101,15 +100,19 @@ fun CalcWholeCompose() {
                         ) {
                             TimeInput(timePickStateStart)
                             TimeInput(timePickStateEnd)
-                            TextField(
-                                value = hourlyText.value,
-                                onValueChange = { hourlyText.value = it },
-                                label = { Text("Satnica") },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                suffix = { Text("€/h") },
-                                modifier = Modifier.widthIn(80.dp)
-                            )
+                            hourlyText.value = autoComplete(
+                                mainViewModel.hourlyPay.observeAsState().value?.map { it.setScale(2).toPlainString() } ?: emptyList(),
+                                mainViewModel.hourlyPay.observeAsState().value?.firstOrNull() ?: BigDecimal(5.25)) ?: ""
                             Spacer(modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp))
+
+//                          TextField(
+//                                value = hourlyText.value,
+//                                onValueChange = { hourlyText.value = it },
+//                                label = { Text("Satnica") },
+//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+//                                suffix = { Text("€/h") },
+//                                modifier = Modifier.widthIn(80.dp)
+//                           )
                         }
 
                         Row(

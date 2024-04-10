@@ -15,27 +15,18 @@ import org.koin.java.KoinJavaComponent
 class FullListFragment : Fragment() {
 
     private var _binding: FragmentFulllistBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+    private val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
-
         _binding = FragmentFulllistBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val sharedPref : SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
-
-
         val composeView = binding.composeView
-        //homeViewModel.getData()
 
         mainViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
@@ -47,7 +38,6 @@ class FullListFragment : Fragment() {
                 )
             )
         }
-
         return root
     }
 

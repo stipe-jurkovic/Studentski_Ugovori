@@ -16,12 +16,9 @@ import org.koin.java.KoinJavaComponent
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
-    val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
+    private val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,8 +30,6 @@ class HomeFragment : Fragment() {
 
         val composeView = binding.composeView
         binding.composeView.setBackgroundColor(resources.getColor(R.color.md_theme_background))
-
-        mainViewModel.getData()
 
         mainViewModel.ugovori.observe(viewLifecycleOwner) {
             composeView.setContent {
@@ -48,6 +43,11 @@ class HomeFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onResume() {
+        mainViewModel.getData()
+        super.onResume()
     }
 
     override fun onDestroyView() {

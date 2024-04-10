@@ -79,7 +79,8 @@ class NetworkService : NetworkServiceInterface {
         next = response.header("Location").toString()
 
         println("GetSAMLRequest: ${response.code} ")
-        return if (simpleID != "" && SC48 != "") {
+        response.close()
+        return if (response.code == 302 && simpleID != "" && SC48 != "") {
             Result.NetworkCallResult.Success("SAMLRequest got!")
         } else {
             lastTimeLoggedIn = 0L
@@ -114,6 +115,10 @@ class NetworkService : NetworkServiceInterface {
 
         println("GetSAMLResponse1: ${response2.code}")
 
+        response2.close()
+        if (response2.code != 200)
+            return Result.NetworkCallResult.Error("Couldn't get SAMLResponse!")
+
         val formBody3 = FormBody.Builder()
             .add("username", username)
             .add("password", password)
@@ -130,7 +135,9 @@ class NetworkService : NetworkServiceInterface {
         SAMLResponse = doc3?.select("input[name=SAMLResponse]")?.attr("value").toString()
 
         println("GetSAMLResponse2: ${response3.code}")
-        return if (SAMLResponse != "") {
+        response3.close()
+
+        return if (response3.code == 200 && SAMLResponse != "") {
             Result.NetworkCallResult.Success("SAMLResponse got!")
         } else {
             lastTimeLoggedIn = 0L
@@ -157,7 +164,8 @@ class NetworkService : NetworkServiceInterface {
 
         println("SendSAMLToWebsc: ${response4.code}")
 
-        return if (simpleAuth != "") {
+        response4.close()
+        return if (response4.code == 303 && simpleAuth != "") {
             Result.NetworkCallResult.Success("SAMLResponse sent to scst!")
         } else {
             lastTimeLoggedIn = 0L
@@ -174,6 +182,9 @@ class NetworkService : NetworkServiceInterface {
         val response5 = client.newCall(request5).execute()
 
         println("LoginFully: ${response5.code}")
+
+        val doc5 = response5.body?.string()?.let { Jsoup.parse(it) }
+        response5.close()
 
         return if (response5.code == 302) {
             lastTimeLoggedIn = System.currentTimeMillis()
@@ -215,8 +226,9 @@ class NetworkService : NetworkServiceInterface {
         val doc6 = response6.body?.string()
 
         println("GetUgovoriData: ${response6.code}")
+        response6.close()
 
-        return if (doc6 != "") {
+        return if (response6.code == 200 && doc6 != "") {
             lastTimeGotData = System.currentTimeMillis()
             Result.NetworkCallResult.Success(doc6.toString())
         } else {

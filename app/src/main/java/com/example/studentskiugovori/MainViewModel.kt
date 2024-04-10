@@ -50,7 +50,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     private val _generated = MutableLiveData<String>().apply { value = "" }
     private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> =
         MutableStateFlow(mapOf())
-    private val _hourlyPay: MutableLiveData<BigDecimal> = MutableLiveData(BigDecimal(0))
+    private val _hourlyPay: MutableLiveData<List<BigDecimal>> = MutableLiveData(emptyList())
     private val _errorText = MutableLiveData<String>().apply { value = "" }
 
     val loadedTxt: LiveData<Status> = _loadedTxt
@@ -60,7 +60,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val cardData: LiveData<CardData> = _cardData
     val daysWorked: StateFlow<Map<LocalDate, List<WorkedHours>>> = _daysWorked
     val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
-    val hourlyPay: LiveData<BigDecimal> = _hourlyPay
+    val hourlyPay: LiveData<List<BigDecimal>> = _hourlyPay
     val errorText: LiveData<String> = _errorText
 
     init {
@@ -94,12 +94,12 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                             ).format(System.currentTimeMillis())
                             _generated.postValue(rn)
                             _ugovori.postValue(parsedData.data as List<Ugovor>?)
-                            _hourlyPay.postValue(parsedData.data.first {
-                                it.STATUSNAZIV?.contains(
-                                    "Izdan",
-                                    ignoreCase = true
-                                ) == true
-                            }.CIJENAWEB?.toBigDecimal() ?: BigDecimal(5.25))
+
+                            _hourlyPay.postValue(parsedData.data.filter {
+                                it.STATUSNAZIV?.contains("Izdan", ignoreCase = true) == true }.map{
+                                it.CIJENAWEB?.toBigDecimal() ?: BigDecimal(0)
+                            })
+
                             _isRefreshing.postValue(false)
                             _loadedTxt.postValue(Status.FETCHED)
                             delay(30)
