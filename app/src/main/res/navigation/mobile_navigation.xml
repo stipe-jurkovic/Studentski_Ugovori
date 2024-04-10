@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_allContracts"
         android:name="com.example.studentskiugovori.ui.fulllist.FullListFragment"
         android:label="@string/title_full_list"
         tools:layout="@layout/fragment_fulllist" />
 
     <fragment
         android:id="@+id/navigation_calculation"
-        android:name="com.example.studentskiugovori.ui.notifications.CalculationFragment"
+        android:name="com.example.studentskiugovori.ui.calculation.CalculationFragment"
         android:label="@string/title_izracun"
         tools:layout="@layout/fragment_calculation" />
 </navigation>

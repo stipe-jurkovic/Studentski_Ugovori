@@ -42,7 +42,7 @@ class Repository(private val networkService: NetworkServiceInterface) {
             return when (val result = networkService.getUgovoriData()) {
                 is Result.NetworkCallResult.Success -> {
                     if (forceLogin) { networkService.resetLastTimeGotData() }
-                    Result.LoginResult.Success(parseUgovore(result.data))
+                    Result.LoginResult.Success(result.data)
                 }
 
                 is Result.NetworkCallResult.Error -> Result.LoginResult.Error("Error getting data:${result.error}")

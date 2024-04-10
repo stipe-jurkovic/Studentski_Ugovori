@@ -1,4 +1,4 @@
-package com.example.studentskiugovori.ui.notifications
+package com.example.studentskiugovori.ui.calculation
 
 import android.os.Bundle
 import android.view.LayoutInflater

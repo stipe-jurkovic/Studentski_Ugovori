@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.studentskiugovori.model.Repository
 import com.example.studentskiugovori.model.data.calculateEarningsAndGetNumbers
+import com.example.studentskiugovori.model.data.parseUgovore
 import com.example.studentskiugovori.model.dataclasses.CardData
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
 import com.example.studentskiugovori.model.dataclasses.WorkedHoursRealm
+import com.example.studentskiugovori.utils.Result.ParseResult
 import com.example.studentskiugovori.model.getWorkedHours
 import com.example.studentskiugovori.utils.Result
 import com.kizitonwose.calendar.core.CalendarDay
@@ -49,6 +51,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     private val _totalPerDay: MutableStateFlow<Map<LocalDate, BigDecimal>> =
         MutableStateFlow(mapOf())
     private val _hourlyPay: MutableLiveData<BigDecimal> = MutableLiveData(BigDecimal(0))
+    private val _errorText = MutableLiveData<String>().apply { value = "" }
 
     val loadedTxt: LiveData<Status> = _loadedTxt
     val isRefreshing: LiveData<Boolean> = _isRefreshing
@@ -58,6 +61,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val daysWorked: StateFlow<Map<LocalDate, List<WorkedHours>>> = _daysWorked
     val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
     val hourlyPay: LiveData<BigDecimal> = _hourlyPay
+    val errorText: LiveData<String> = _errorText
 
     init {
         realm.getWorkedHours().getWorkedHours().forEach() {
@@ -82,23 +86,36 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                 timeout = !refresh
             )) {
                 is Result.LoginResult.Success -> {
-                    val rn = SimpleDateFormat(
-                        "dd.MM.yyyy HH:mm:ss",
-                        Locale.getDefault()
-                    ).format(System.currentTimeMillis())
-                    _generated.postValue(rn)
-                    _ugovori.postValue(result.data as List<Ugovor>?)
-                    _hourlyPay.postValue(result.data.first {
-                        it.STATUSNAZIV?.contains(
-                            "Izdan",
-                            ignoreCase = true
-                        ) == true
-                    }.CIJENAWEB?.toBigDecimal() ?: BigDecimal(5.25))
-                    _isRefreshing.postValue(false)
-                    _loadedTxt.postValue(Status.FETCHED)
-                    delay(30)
-                    _loadedTxt.postValue(Status.FETCHED_NEW)
-                    _cardData.postValue(calculateEarningsAndGetNumbers(result.data))
+                    when (val parsedData = parseUgovore(result.data as String)){
+                        is ParseResult.Success -> {
+                            val rn = SimpleDateFormat(
+                                "dd.MM.yyyy HH:mm:ss",
+                                Locale.getDefault()
+                            ).format(System.currentTimeMillis())
+                            _generated.postValue(rn)
+                            _ugovori.postValue(parsedData.data as List<Ugovor>?)
+                            _hourlyPay.postValue(parsedData.data.first {
+                                it.STATUSNAZIV?.contains(
+                                    "Izdan",
+                                    ignoreCase = true
+                                ) == true
+                            }.CIJENAWEB?.toBigDecimal() ?: BigDecimal(5.25))
+                            _isRefreshing.postValue(false)
+                            _loadedTxt.postValue(Status.FETCHED)
+                            delay(30)
+                            _loadedTxt.postValue(Status.FETCHED_NEW)
+                            _cardData.postValue(calculateEarningsAndGetNumbers(parsedData.data))
+                        }
+                        is ParseResult.Error -> {
+                            snackbarHostState.showSnackbar("Greška prilikom parsiranja podataka")
+                            println(parsedData.error)
+                            _isRefreshing.postValue(false)
+                            _loadedTxt.postValue(Status.FETCHING_ERROR)
+                            _errorText.postValue(parsedData.error)
+                            return@launch
+                        }
+                    }
+
                 }
 
                 is Result.LoginResult.Refresh -> {
@@ -113,6 +130,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                     println(result.error)
                     _isRefreshing.postValue(false)
                     _loadedTxt.postValue(Status.FETCHING_ERROR)
+                    _errorText.postValue(result.error)
                     return@launch
                 }
             }

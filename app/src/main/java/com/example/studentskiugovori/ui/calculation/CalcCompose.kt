@@ -1,4 +1,4 @@
-package com.example.studentskiugovori.compose
+package com.example.studentskiugovori.ui.calculation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.studentskiugovori.MainViewModel
+import com.example.studentskiugovori.compose.AppTheme
+import com.example.studentskiugovori.compose.WorkedItemCompose
 import com.example.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
 import com.example.studentskiugovori.compose.calendarcompose.clickable
 import com.example.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
@@ -97,7 +101,11 @@ fun CalcCompose(): CalendarDay? {
         selection = CalendarDay(LocalDate.now(), DayPosition.MonthDate)
     }// Clear selection if we scroll to a new month.
     Column(
-        verticalArrangement = Arrangement.Top, modifier = Modifier.fillMaxWidth()
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+
     ) {
         SimpleCalendarTitle(
             modifier = Modifier
@@ -132,30 +140,57 @@ fun CalcCompose(): CalendarDay? {
                 WorkedItemCompose(it)
             }
         }
-        Column {
-            var sum = BigDecimal(0)
-            mainViewModel.totalPerDay.collectAsState().value.forEach {
-                if (it.key.month == visibleMonth.yearMonth.month) {
-                    sum += it.value
+        var sum = BigDecimal(0)
+        var hours = BigDecimal(0)
+        mainViewModel.totalPerDay.collectAsState().value.forEach {
+            if (it.key.month == visibleMonth.yearMonth.month) {
+                sum += it.value
+            }
+        }
+        mainViewModel.daysWorked.collectAsState().value.forEach { it ->
+            if (it.key.month == visibleMonth.yearMonth.month) {
+                it.value.forEach { it2 ->
+                    hours += it2.hours
                 }
             }
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    Modifier
-                        .padding(10.dp)
-                        .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(MaterialTheme.colorScheme.surface)
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) { Text("Ukupna zarada ovaj mjesec: $sum €") }
-                /*Text("Ukupna zarada ovaj tjedan: ")
-                Text("Ukupna predviđena zarada: ")*/
+        }
+        Column(modifier = Modifier.fillMaxWidth()) {
+            val rowmodifier = Modifier
+                .padding(10.dp)
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .fillMaxWidth()
+                .padding(10.dp)
+            Row(rowmodifier) {
+                Text("Ukupna zarada ovaj mjesec: $sum €")
+
+            }
+            Row(rowmodifier) {
+                Text("Broj odrađenih sati u ${numToMonth(currentMonth.monthValue)}: $hours")
             }
         }
     }
     return selection
 
+}
+
+fun numToMonth(num: Int): String {
+    return when (num) {
+        1 -> "siječnju"
+        2 -> "veljači"
+        3 -> "ožujku"
+        4 -> "travnju"
+        5 -> "svibnju"
+        6 -> "lipnju"
+        7 -> "srpnju"
+        8 -> "kolovozu"
+        9 -> "rujnu"
+        10 -> "listopadu"
+        11 -> "studenom"
+        12 -> "prosincu"
+        else -> "mjesecu"
+    }
 }
 
 @Composable

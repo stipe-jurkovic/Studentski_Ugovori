@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import com.example.studentskiugovori.MainViewModel
 import com.example.studentskiugovori.compose.AppTheme
-import com.example.studentskiugovori.compose.FullListCompose
 import com.example.studentskiugovori.databinding.FragmentFulllistBinding
 import org.koin.java.KoinJavaComponent
 

@@ -14,4 +14,14 @@ sealed class Result {
         data class Error(val error: String) : LoginResult()
     }
 
+    sealed class ParseResult : Result() {
+        data class Success(val data: Any) : ParseResult()
+        data class Error(val error: String) : ParseResult()
+    }
+
+    sealed class GenericResult : Result() {
+        data class Success(val data: Any) :GenericResult()
+        data class Error(val error: String) : GenericResult()
+    }
+
 }

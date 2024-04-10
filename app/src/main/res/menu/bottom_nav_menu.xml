@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_allContracts"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/title_full_list" />
 
@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_calculation"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/math_svgrepo_com"
         android:title="@string/title_izracun" />
 
 </menu>

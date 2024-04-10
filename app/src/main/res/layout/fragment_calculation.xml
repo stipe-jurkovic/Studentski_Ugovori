@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.notifications.CalculationFragment">
+    tools:context=".ui.calculation.CalculationFragment">
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/compose_view"

@@ -4,13 +4,11 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -42,9 +40,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.studentskiugovori.MainViewModel
-import com.example.studentskiugovori.model.Result.Result
 import com.example.studentskiugovori.model.data.calculateDayEarning
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
+import com.example.studentskiugovori.ui.calculation.CalcCompose
+import com.example.studentskiugovori.utils.Result.GenericResult
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
@@ -149,13 +148,13 @@ fun CalcWholeCompose() {
                                                 timeEndSelected,
                                                 hourlyText.value.toBigDecimal()
                                             )) {
-                                                is Result.Success ->
+                                                is GenericResult.Success ->
                                                     mainViewModel.addDayWorked(
                                                         selectionDate,
-                                                        result.data
+                                                        result.data as WorkedHours
                                                     )
 
-                                                is Result.Error -> mainViewModel.addDayWorked(
+                                                is GenericResult.Error -> mainViewModel.addDayWorked(
                                                     selectionDate,
                                                     WorkedHours(
                                                         UUID.randomUUID(),
@@ -171,7 +170,7 @@ fun CalcWholeCompose() {
                                         } catch (e: Exception) {
                                             Toast.makeText(
                                                 context,
-                                                "Netočan unos satnice",
+                                                "Netočan unos brojeva",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }

@@ -1,10 +1,11 @@
 package com.example.studentskiugovori.model.data
 
-import com.example.studentskiugovori.model.Result.Result
 import com.example.studentskiugovori.model.dataclasses.CardData
 import com.example.studentskiugovori.model.dataclasses.Ugovor
 import com.example.studentskiugovori.model.dataclasses.UgovoriData
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
+import com.example.studentskiugovori.utils.Result.ParseResult
+import com.example.studentskiugovori.utils.Result.GenericResult
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -13,29 +14,34 @@ import java.time.LocalTime
 import java.util.UUID
 
 
-fun parseUgovore(data: String): List<Ugovor> {
-    val ugovoriData = Json.decodeFromString<UgovoriData>(data)
-    val lista = mutableListOf<Ugovor>()
-    for (i in 0..<ugovoriData.total) {
-        lista.add(
-            Ugovor(
-                ugovoriData.rows.GODINA[i],
-                ugovoriData.rows.UGOVOR[i],
-                ugovoriData.rows.STATUSNAZIV[i],
-                ugovoriData.rows.PARTNERNAZIVWEB[i],
-                ugovoriData.rows.PARTNERNAZIV[i],
-                ugovoriData.rows.POSAONAZIV[i],
-                ugovoriData.rows.NETO[i],
-                ugovoriData.rows.ISPLATANETO[i],
-                ugovoriData.rows.VALUTAUNOS[i],
-                ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9),
-                ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9),
-                ugovoriData.rows.CIJENAWEB[i],
-                ugovoriData.rows.STATUSWEB[i]
+fun parseUgovore(data: String): ParseResult{
+    try {
+        val ugovoriData = Json.decodeFromString<UgovoriData>(data)
+        val lista = mutableListOf<Ugovor>()
+        for (i in 0..<ugovoriData.total) {
+            lista.add(
+                Ugovor(
+                    ugovoriData.rows.GODINA[i] ?: 0,
+                    ugovoriData.rows.UGOVOR[i] ?: 0,
+                    ugovoriData.rows.STATUSNAZIV[i] ?: "",
+                    ugovoriData.rows.PARTNERNAZIVWEB[i] ?: "",
+                    ugovoriData.rows.PARTNERNAZIV[i] ?: "",
+                    ugovoriData.rows.POSAONAZIV[i] ?: "",
+                    ugovoriData.rows.NETO[i] ?: 0.0,
+                    ugovoriData.rows.ISPLATANETO[i] ?: 0.0,
+                    ugovoriData.rows.VALUTAUNOS[i] ?: "",
+                    ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9) ?: "",
+                    ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9) ?: "",
+                    ugovoriData.rows.CIJENAWEB[i] ?: 0.0,
+                    ugovoriData.rows.STATUSWEB[i] ?: 0,
+                )
             )
-        )
+        }
+        return ParseResult.Success(lista)
     }
-    return lista
+    catch (e: Exception) {
+        return ParseResult.Error(e.message ?: "Error parsing data")
+    }
 }
 
 fun calculateEarningsAndGetNumbers(list: List<Ugovor>): CardData {
@@ -57,7 +63,7 @@ fun calculateEarningsAndGetNumbers(list: List<Ugovor>): CardData {
             numOfIzdanih++
         }
     }
-    sum = sum.toBigDecimal().setScale(2, java.math.RoundingMode.HALF_UP).toDouble()
+    sum = sum.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
     return CardData(sum, numOfPaid, numOfIzdanih)
 }
 
@@ -67,15 +73,15 @@ fun calculateDayEarning(
     endTime: LocalTime,
     hourly: BigDecimal,
     isOvertimeDay: Boolean = false
-): Result<WorkedHours> {
+): GenericResult {
     val startHourMinutes = BigDecimal(startTime.hour * 60 + startTime.minute)
     val endHourMinutes = BigDecimal(endTime.hour * 60 + endTime.minute)
     val start = startHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
     var end = endHourMinutes.divide(BigDecimal(60), 4, RoundingMode.HALF_UP)
 
-    if (start == end) return Result.Error("Start and end time are the same")
+    if (start == end) return GenericResult.Error("Start and end time are the same")
     if (end.stripTrailingZeros() == BigDecimal(0)) end = BigDecimal(24)
-    if (end <= start) return Result.Error("End time is before start time")
+    if (end <= start) return GenericResult.Error("End time is before start time")
 
     var overtime = BigDecimal(0)
     var time = BigDecimal(0)
@@ -114,7 +120,7 @@ fun calculateDayEarning(
             .setScale(2, RoundingMode.HALF_UP)
     }
 
-    return Result.Success(
+    return GenericResult.Success(
         WorkedHours(
             UUID.randomUUID(),
             date,
