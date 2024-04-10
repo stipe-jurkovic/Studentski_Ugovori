@@ -1,4 +1,4 @@
-package com.example.studentskiugovori.compose
+package com.example.studentskiugovori.ui.calculation
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -38,25 +38,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.studentskiugovori.MainViewModel
+import com.example.studentskiugovori.compose.AppTheme
+import com.example.studentskiugovori.compose.autoComplete
 import com.example.studentskiugovori.model.data.calculateDayEarning
 import com.example.studentskiugovori.model.dataclasses.WorkedHours
-import com.example.studentskiugovori.ui.calculation.CalcCompose
 import com.example.studentskiugovori.utils.Result.GenericResult
 import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
-import java.math.MathContext
 import java.time.LocalTime
 import java.util.UUID
 
-
-@Composable
-fun ThemeSelectDay() {
-    AppTheme {
-        CalcWholeCompose()
-    }
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,15 +97,6 @@ fun CalcWholeCompose() {
                                 mainViewModel.hourlyPay.observeAsState().value?.map { it.setScale(2).toPlainString() } ?: emptyList(),
                                 mainViewModel.hourlyPay.observeAsState().value?.firstOrNull() ?: BigDecimal(5.25)) ?: ""
                             Spacer(modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp))
-
-//                          TextField(
-//                                value = hourlyText.value,
-//                                onValueChange = { hourlyText.value = it },
-//                                label = { Text("Satnica") },
-//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                                suffix = { Text("€/h") },
-//                                modifier = Modifier.widthIn(80.dp)
-//                           )
                         }
 
                         Row(
@@ -190,53 +174,6 @@ fun CalcWholeCompose() {
         ) {
             Column {
                 selection = CalcCompose()
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun Demo_ExposedDropdownMenuBox() {
-    val context = LocalContext.current
-    val coffeeDrinks = arrayOf("Americano", "Cappuccino", "Espresso", "Latte", "Mocha")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(coffeeDrinks[0]) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(32.dp)
-    ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                value = selectedText,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                coffeeDrinks.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(text = item) },
-                        onClick = {
-                            selectedText = item
-                            expanded = false
-                            Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
             }
         }
     }

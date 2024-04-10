@@ -16,7 +16,7 @@ var trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
 
     override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
 
-    override fun getAcceptedIssuers(): Array<X509Certificate>? {
+    override fun getAcceptedIssuers(): Array<X509Certificate> {
         return arrayOf()
     }
 }
@@ -109,13 +109,13 @@ class NetworkService : NetworkServiceInterface {
             .build()
         val response2 = client.newCall(request2).execute()
         val doc2 = response2.body?.string()?.let { Jsoup.parse(it) }
-        //val authState = doc2?.select("input[name=AuthState]")?.attr("value") ?:""
+        response2.close()
+
         val loginLink = doc2?.select("form.login-form")?.attr("action").toString()
         val authState = loginLink.split("AuthState=")[1]
 
         println("GetSAMLResponse1: ${response2.code}")
 
-        response2.close()
         if (response2.code != 200)
             return Result.NetworkCallResult.Error("Couldn't get SAMLResponse!")
 
@@ -132,10 +132,10 @@ class NetworkService : NetworkServiceInterface {
 
         val response3 = client.newCall(request3).execute()
         val doc3 = response3.body?.string()?.let { Jsoup.parse(it) }
+        response3.close()
         SAMLResponse = doc3?.select("input[name=SAMLResponse]")?.attr("value").toString()
 
         println("GetSAMLResponse2: ${response3.code}")
-        response3.close()
 
         return if (response3.code == 200 && SAMLResponse != "") {
             Result.NetworkCallResult.Success("SAMLResponse got!")
@@ -159,12 +159,12 @@ class NetworkService : NetworkServiceInterface {
         val response4 = client.newCall(request4).execute()
         val doc4 = response4.body?.string()?.let { Jsoup.parse(it) }
 
+        response4.close()
+
         simpleAuth = response4.headers["Set-Cookie"]?.split(";")?.get(0) ?: ""
         url = doc4?.select("a[id=redirlink]")?.attr("href").toString()
 
         println("SendSAMLToWebsc: ${response4.code}")
-
-        response4.close()
         return if (response4.code == 303 && simpleAuth != "") {
             Result.NetworkCallResult.Success("SAMLResponse sent to scst!")
         } else {
@@ -180,11 +180,9 @@ class NetworkService : NetworkServiceInterface {
             .header("Cookie", "$simpleID; $SC48; $simpleAuth")
             .build()
         val response5 = client.newCall(request5).execute()
+        response5.close()
 
         println("LoginFully: ${response5.code}")
-
-        val doc5 = response5.body?.string()?.let { Jsoup.parse(it) }
-        response5.close()
 
         return if (response5.code == 302) {
             lastTimeLoggedIn = System.currentTimeMillis()
@@ -198,23 +196,9 @@ class NetworkService : NetworkServiceInterface {
     override fun getUgovoriData(): Result.NetworkCallResult<String> {
         val baseUrl = "https://websc.scst.hr:8495/sc/48/ugovor/pregled/0"
         val reqType = "kendogrid"
-        val panelFilter = """{"datumOd":"","datumDo":"","godina":-1,"racun":0,"status":-2}"""
-        val selectedYear = "2023"
-        val selectedContract = "22090"
-        val take = "999"
-        val skip = "0"
-        val page = "1"
-        val pageSize = "999"
-        val sortField1 = "RADIODOWEB"
-        val sortDir1 = "desc"
-        val sortField2 = "RADIOODWEB"
-        val sortDir2 = "desc"
+        val pageSize = "10000"
 
-        val url2 =
-            "$baseUrl?reqtype=$reqType&panelFilter=$panelFilter&selValues[GODINA]=$selectedYear" +
-                    "&selValues[UGOVOR]=$selectedContract&take=$take&skip=$skip&page=$page" +
-                    "&pageSize=$pageSize&sort[0][field]=$sortField1&sort[0][dir]=$sortDir1&sort[1][field]=$sortField2" +
-                    "&sort[1][dir]=$sortDir2&filter[logic]=and"
+        val url2 = "$baseUrl?reqtype=$reqType&pageSize=$pageSize"
 
         val request6 = Request.Builder()
             .url(url2)
