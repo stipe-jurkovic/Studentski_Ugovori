@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.studentskiugovori"
+    namespace = "com.ugovori.studentskiugovori"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.studentskiugovori"
+        applicationId = "com.ugovori.studentskiugovori"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

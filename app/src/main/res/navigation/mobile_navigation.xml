@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.studentskiugovori.ui.home.HomeFragment"
+        android:name="com.ugovori.studentskiugovori.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_allContracts"
-        android:name="com.example.studentskiugovori.ui.fulllist.FullListFragment"
+        android:name="com.ugovori.studentskiugovori.ui.fulllist.FullListFragment"
         android:label="@string/title_full_list"
         tools:layout="@layout/fragment_fulllist" />
 
     <fragment
         android:id="@+id/navigation_calculation"
-        android:name="com.example.studentskiugovori.ui.calculation.CalculationFragment"
+        android:name="com.ugovori.studentskiugovori.ui.calculation.CalculationFragment"
         android:label="@string/title_izracun"
         tools:layout="@layout/fragment_calculation" />
 </navigation>
