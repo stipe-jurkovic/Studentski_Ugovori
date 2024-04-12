@@ -14,9 +14,11 @@ import java.time.LocalTime
 import java.util.UUID
 
 
+private val json = Json { ignoreUnknownKeys = true }
+
 fun parseUgovore(data: String): ParseResult{
     try {
-        val ugovoriData = Json.decodeFromString<UgovoriData>(data)
+        val ugovoriData = json.decodeFromString<UgovoriData>(data)
         val lista = mutableListOf<Ugovor>()
         for (i in 0..<ugovoriData.total) {
             lista.add(
