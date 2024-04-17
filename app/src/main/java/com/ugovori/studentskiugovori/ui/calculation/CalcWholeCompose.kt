@@ -31,18 +31,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.kizitonwose.calendar.core.CalendarDay
 import com.ugovori.studentskiugovori.MainViewModel
 import com.ugovori.studentskiugovori.compose.autoComplete
 import com.ugovori.studentskiugovori.model.data.calculateDayEarning
 import com.ugovori.studentskiugovori.model.dataclasses.WorkedHours
 import com.ugovori.studentskiugovori.utils.Result.GenericResult
-import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.util.UUID
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +73,8 @@ fun CalcWholeCompose() {
                 if (showBottomSheet) {
                     val timePickStateStart = rememberTimePickerState(6, 0)
                     val timePickStateEnd = rememberTimePickerState(14, 0)
-                    val hourlyText = remember { mutableStateOf(mainViewModel.hourlyPay.value.toString()) }
+                    val hourlyText =
+                        remember { mutableStateOf(mainViewModel.hourlyPay.value.toString()) }
 
                     ModalBottomSheet(
                         sheetState = sheetState,
@@ -87,8 +88,11 @@ fun CalcWholeCompose() {
                             TimeInput(timePickStateStart)
                             TimeInput(timePickStateEnd)
                             hourlyText.value = autoComplete(
-                                mainViewModel.hourlyPay.observeAsState().value?.map { it.setScale(2).toPlainString() } ?: emptyList(),
-                                mainViewModel.hourlyPay.observeAsState().value?.firstOrNull() ?: BigDecimal(5.25)) ?: ""
+                                mainViewModel.hourlyPay.observeAsState().value?.map {
+                                    it.setScale(2).toPlainString()
+                                } ?: emptyList(),
+                                mainViewModel.hourlyPay.observeAsState().value?.firstOrNull()
+                                    ?: BigDecimal(5.25)) ?: ""
                             Spacer(modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp))
                         }
 
@@ -112,21 +116,20 @@ fun CalcWholeCompose() {
                             Button(onClick = {
                                 scope.launch { sheetState.hide() }.invokeOnCompletion {
                                     val timeStartSelected = LocalTime.of(
-                                        timePickStateStart.hour, timePickStateStart.minute
-                                    )
+                                        timePickStateStart.hour, timePickStateStart.minute)
                                     val timeEndSelected = LocalTime.of(
-                                        timePickStateEnd.hour, timePickStateEnd.minute
-                                    )
+                                        timePickStateEnd.hour, timePickStateEnd.minute)
                                     if (!sheetState.isVisible && selection != null) {
                                         showBottomSheet = false
 
                                         val selectionDate = selection as CalendarDay
                                         try {
                                             when (val result = calculateDayEarning(
-                                                selectionDate.date,
-                                                timeStartSelected,
-                                                timeEndSelected,
-                                                hourlyText.value.toBigDecimal()
+                                                date = selectionDate.date,
+                                                startTime = timeStartSelected,
+                                                endTime = timeEndSelected,
+                                                hourly = hourlyText.value.toBigDecimal(),
+                                                isOvertimeDay = selectionDate.date.dayOfWeek == DayOfWeek.SUNDAY
                                             )) {
                                                 is GenericResult.Success ->
                                                     mainViewModel.addDayWorked(

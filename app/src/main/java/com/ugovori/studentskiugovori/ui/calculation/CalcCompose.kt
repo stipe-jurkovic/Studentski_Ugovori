@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import com.ugovori.studentskiugovori.MainViewModel
 import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.compose.AppTheme
-import com.ugovori.studentskiugovori.compose.WorkedItemCompose
 import com.ugovori.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
 import com.ugovori.studentskiugovori.compose.calendarcompose.clickable
 import com.ugovori.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
@@ -55,6 +54,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
+import com.ugovori.studentskiugovori.compose.ThreeLineListItemWithOverlineAndSupporting
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
@@ -148,7 +148,7 @@ fun CalcCompose(): CalendarDay? {
         HorizontalDivider()
         Column(modifier = Modifier.fillMaxWidth()) {
             daysWorked[selection?.date]?.toList()?.forEach {
-                WorkedItemCompose(it)
+                ThreeLineListItemWithOverlineAndSupporting(it)
             }
         }
         var sum = BigDecimal(0)
@@ -158,7 +158,7 @@ fun CalcCompose(): CalendarDay? {
                 sum += it.value
             }
         }
-        mainViewModel.daysWorked.collectAsState().value.forEach { it ->
+        mainViewModel.daysWorked.collectAsState().value.forEach {
             if (it.key.month == visibleMonth.yearMonth.month) {
                 it.value.forEach { it2 ->
                     hours += it2.hours
@@ -166,18 +166,14 @@ fun CalcCompose(): CalendarDay? {
             }
         }
         Column(modifier = Modifier.fillMaxWidth()) {
-            val rowmodifier = Modifier
+            Column(Modifier
                 .padding(10.dp)
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .fillMaxWidth()
-                .padding(10.dp)
-            Row(rowmodifier) {
+                .padding(10.dp)) {
                 Text("Ukupna zarada ovaj mjesec: $sum €")
-
-            }
-            Row(rowmodifier) {
                 Text("Broj odrađenih sati u ${numToMonth(currentMonth.monthValue)}: $hours")
             }
             val context = LocalContext.current

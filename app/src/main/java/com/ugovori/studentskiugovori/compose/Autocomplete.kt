@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import java.math.BigDecimal
+import java.math.MathContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -64,7 +65,7 @@ fun autoComplete(
         "Grizzly Bear",
         "Sloth"
     ),
-    selected: BigDecimal = BigDecimal(55.30)
+    selected: BigDecimal = BigDecimal(5.30).round(MathContext(2))
 ): String? {
 
     var category by remember { mutableStateOf(selected.setScale(2).toPlainString()) }
@@ -91,12 +92,12 @@ fun autoComplete(
             fontWeight = FontWeight.Medium
         )
 
-        Column(modifier = Modifier.widthIn(80.dp)) {
+        Column(modifier = Modifier.width(200.dp)) {
 
-            Row(modifier = Modifier.wrapContentWidth()) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 TextField(
                     modifier = Modifier
-                        .wrapContentWidth()
+                        .fillMaxWidth()
                         .height(heightTextFields)
                         .border(
                             width = 1.8.dp,
