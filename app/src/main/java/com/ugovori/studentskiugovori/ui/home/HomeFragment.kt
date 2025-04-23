@@ -10,7 +10,6 @@ import com.ugovori.studentskiugovori.MainViewModel
 import com.ugovori.studentskiugovori.compose.AppTheme
 import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.databinding.FragmentHomeBinding
-import com.ugovori.studomatisvu.compose.HomeCompose
 import org.koin.java.KoinJavaComponent
 
 class HomeFragment : Fragment() {

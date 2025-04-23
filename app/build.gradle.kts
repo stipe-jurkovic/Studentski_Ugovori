@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "com.ugovori.studentskiugovori"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ugovori.studentskiugovori"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 3
-        versionName = "1.1.0"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
