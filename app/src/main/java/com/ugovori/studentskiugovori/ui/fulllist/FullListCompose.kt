@@ -5,8 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.captionBar
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,10 +53,9 @@ fun FullListCompose(mainViewModel: MainViewModel) {
 
 
     Scaffold(
-        modifier = Modifier
-            .pullRefresh(pullRefreshState)
-            .padding(0.dp),
+        modifier = Modifier.pullRefresh(pullRefreshState),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { innerPadding ->
 
         if ((loadedTxt == Status.FETCHING || loadedTxt == Status.UNSET) && !isRefreshing) {

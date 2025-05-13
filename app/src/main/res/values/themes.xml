@@ -28,4 +28,7 @@
         <item name="colorSurfaceInverse">@color/md_theme_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
     </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.Material3.Light.NoActionBar">
+    </style>
 </resources>

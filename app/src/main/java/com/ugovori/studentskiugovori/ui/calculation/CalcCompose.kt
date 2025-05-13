@@ -116,7 +116,6 @@ fun CalcCompose(): CalendarDay? {
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-
     ) {
         SimpleCalendarTitle(
             modifier = Modifier

@@ -4,4 +4,7 @@
     <string name="title_full_list">Svi ugovori</string>
     <string name="title_izracun">Izračun</string>
     <string name="title_log_out">Odjavi se</string>
+    <string name="homeText">Početna</string>
+    <string name="svi_ugovori">Svi ugovori</string>
+    <string name="izracun">Izračun</string>
 </resources>

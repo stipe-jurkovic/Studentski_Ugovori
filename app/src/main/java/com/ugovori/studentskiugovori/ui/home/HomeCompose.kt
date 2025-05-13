@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -54,9 +55,9 @@ fun HomeCompose(mainViewModel: MainViewModel) {
     Scaffold(
         modifier = Modifier
             .pullRefresh(pullRefreshState)
-            .padding(0.dp)
             .background(color = colorResource(id = R.color.md_theme_background)),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { innerPadding ->
 
         if ((loadedTxt == Status.FETCHING || loadedTxt == Status.UNSET) && !isRefreshing) {

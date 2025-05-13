@@ -72,6 +72,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                 false
             )
         }
+        getData()
     }
 
     fun getData(refresh: Boolean = false) {

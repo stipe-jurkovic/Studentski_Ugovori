@@ -12,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.ugovori.studentskiugovori"
+        applicationId = "com.ugovori.studentskiugovoritest"
         minSdk = 26
         targetSdk = 35
         versionCode = 6
@@ -96,6 +96,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // The compose calendar library
-    implementation("com.kizitonwose.calendar:compose:2.4.0")
+    implementation("com.kizitonwose.calendar:compose:2.6.0")
+    implementation("androidx.navigation:navigation-compose:2.8.2")
 
 }
