@@ -40,12 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ugovori.studentskiugovori.MainViewModel
-import com.ugovori.studentskiugovori.R
-import com.ugovori.studentskiugovori.compose.AppTheme
-import com.ugovori.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
-import com.ugovori.studentskiugovori.compose.calendarcompose.clickable
-import com.ugovori.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -54,7 +48,14 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
+import com.kizitonwose.calendar.core.yearMonth
+import com.ugovori.studentskiugovori.MainViewModel
+import com.ugovori.studentskiugovori.R
+import com.ugovori.studentskiugovori.compose.AppTheme
 import com.ugovori.studentskiugovori.compose.ThreeLineListItemWithOverlineAndSupporting
+import com.ugovori.studentskiugovori.compose.calendarcompose.SimpleCalendarTitle
+import com.ugovori.studentskiugovori.compose.calendarcompose.clickable
+import com.ugovori.studentskiugovori.compose.calendarcompose.rememberFirstCompletelyVisibleMonth
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
@@ -83,13 +84,13 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 @Composable
 fun ThemeCalcCompose() {
     AppTheme {
-        CalcCompose()
+        calcCompose()
     }
 }
 
 
 @Composable
-fun CalcCompose(): CalendarDay? {
+fun calcCompose(): CalendarDay? {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
@@ -109,14 +110,20 @@ fun CalcCompose(): CalendarDay? {
     val coroutineScope = rememberCoroutineScope()
     val visibleMonth = rememberFirstCompletelyVisibleMonth(state)
     LaunchedEffect(visibleMonth) {
-        selection = CalendarDay(LocalDate.now(), DayPosition.MonthDate)
+        selection =
+            if (visibleMonth.yearMonth == YearMonth.now())
+                CalendarDay(
+                    LocalDate.now(),
+                    DayPosition.MonthDate
+                ) // Select today if we are in the current month.
+            else
+                CalendarDay(visibleMonth.yearMonth.atDay(1), DayPosition.MonthDate)
     }// Clear selection if we scroll to a new month.
     Column(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-
     ) {
         SimpleCalendarTitle(
             modifier = Modifier
@@ -125,7 +132,7 @@ fun CalcCompose(): CalendarDay? {
             currentMonth = visibleMonth.yearMonth,
             goToPrevious = {
                 coroutineScope.launch {
-                    state.scrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth) //could be animated
+                    state.scrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth)
                 }
             },
             goToNext = {
@@ -142,7 +149,7 @@ fun CalcCompose(): CalendarDay? {
                     clicked
                 }
             }
-        }, userScrollEnabled = false, monthHeader = {
+        }, monthHeader = {
             DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title as month header
         })
         HorizontalDivider()
@@ -153,26 +160,28 @@ fun CalcCompose(): CalendarDay? {
         }
         var sum = BigDecimal(0)
         var hours = BigDecimal(0)
-        mainViewModel.totalPerDay.collectAsState().value.forEach {
-            if (it.key.month == visibleMonth.yearMonth.month) {
-                sum += it.value
-            }
+        mainViewModel.totalPerDay.collectAsState().value.filter {
+            it.key.yearMonth == visibleMonth.yearMonth
+        }.forEach {
+            sum += it.value
         }
-        mainViewModel.daysWorked.collectAsState().value.forEach {
-            if (it.key.month == visibleMonth.yearMonth.month) {
-                it.value.forEach { it2 ->
-                    hours += it2.hours
-                }
+        mainViewModel.daysWorked.collectAsState().value.filter {
+            it.key.yearMonth == visibleMonth.yearMonth
+        }.forEach {
+            it.value.forEach { it2 ->
+                hours += it2.hours
             }
         }
         Column(modifier = Modifier.fillMaxWidth()) {
-            Column(Modifier
-                .padding(10.dp)
-                .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
-                .clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .fillMaxWidth()
-                .padding(10.dp)) {
+            Column(
+                Modifier
+                    .padding(10.dp)
+                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
                 Text("Ukupna zarada ovaj mjesec: $sum €")
                 Text("Broj odrađenih sati u ${numToMonth(currentMonth.monthValue)}: $hours")
             }
@@ -188,7 +197,7 @@ fun CalcCompose(): CalendarDay? {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(R.drawable.copy_svgrepo_com__1_),
+                        painter = painterResource(R.drawable.copy_icon),
                         contentDescription = "Sati u txt formatu",
                         Modifier
                             .width(24.dp)
@@ -238,7 +247,6 @@ fun numToMonth(num: Int): String {
 fun Day(
     day: CalendarDay,
     isSelected: Boolean = false,
-    colors: List<Color> = emptyList(),
     onClick: (CalendarDay) -> Unit = {},
 ) {
     val selectedItemColor = MaterialTheme.colorScheme.secondary
@@ -279,8 +287,7 @@ fun Day(
             when (day.position) {
                 DayPosition.MonthDate -> if (daysWorked.value[day.date] != null) {
                     Text(
-                        text = (daysWorked.value[day.date]?.round(MathContext(3)).toString() + " €")
-                            ?: ""
+                        text = daysWorked.value[day.date]?.round(MathContext(3)).toString() + " €"
                     )
                 } else {
                     Text(text = "")

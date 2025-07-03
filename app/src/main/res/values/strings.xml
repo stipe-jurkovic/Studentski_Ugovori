@@ -4,4 +4,16 @@
     <string name="title_full_list">Svi ugovori</string>
     <string name="title_izracun">Izračun</string>
     <string name="title_log_out">Odjavi se</string>
+    <string name="homeText">Početna</string>
+    <string name="svi_ugovori">Svi ugovori</string>
+    <string name="izracun">Izračun</string>
+    <string name="cancel">Odustani</string>
+    <string name="save">Spremi</string>
+    <string name="add">Dodaj</string>
+    <string name="email_label">Email</string>
+    <string name="enter_email_placeholder">Unesi email</string>
+    <string name="password_label">Lozinka</string>
+    <string name="enter_password_placeholder">Unesi lozinku</string>
+    <string name="studentski_ugovori_title_login">Studentski Ugovori</string>
+    <string name="login_button">Prijava</string>
 </resources>

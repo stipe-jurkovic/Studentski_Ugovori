@@ -1,7 +1,6 @@
 package com.ugovori.studentskiugovori.ui.login
 
 import android.content.SharedPreferences
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,9 +46,14 @@ import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.model.Repository
 import com.ugovori.studentskiugovori.utils.NetworkService
 import android.graphics.Canvas
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import com.ugovori.studentskiugovori.compose.AppTheme
+import androidx.core.graphics.createBitmap
 
 
 @Preview
@@ -75,13 +79,19 @@ fun LoginCompose(
     val snackbarHostState = remember { snackbarHostS }
     var textEmail by remember { mutableStateOf("") }
     var textPass by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    fun onDone() {
+        keyboardController?.hide()
+        loginViewModel.attemptLogin(textEmail, textPass, sheredPrefs)
+    }
 
     var passwordVisibility by remember { mutableStateOf(false) }
     val icon = painterResource(
         id = if (passwordVisibility)
-            R.drawable.invisible
+            R.drawable.hide_password
         else
-            R.drawable.view
+            R.drawable.show_password
     )
 
     Scaffold(
@@ -99,24 +109,24 @@ fun LoginCompose(
         ) {
             Sandbox()
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Studentski Ugovori", style = MaterialTheme.typography.h5)
+            Text(text = stringResource(R.string.studentski_ugovori_title_login), style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
             Column {
                 OutlinedTextField(
                     value = textEmail,
                     onValueChange = { textEmail = it },
                     shape = RoundedCornerShape(10.dp),
-                    label = { Text(text = "Email") },
-                    placeholder = { Text("Unesi email") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    label = { Text(text = stringResource(R.string.email_label)) },
+                    placeholder = { Text(stringResource(R.string.enter_email_placeholder)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = textPass,
                     onValueChange = { textPass = it },
                     shape = RoundedCornerShape(10.dp),
-                    label = { Text(text = "Lozinka") },
-                    placeholder = { Text("Unesi lozinku") },
+                    label = { Text(text = stringResource(R.string.password_label)) },
+                    placeholder = { Text(stringResource(R.string.enter_password_placeholder)) },
                     trailingIcon = {
                         IconButton(onClick = {
                             passwordVisibility = !passwordVisibility
@@ -128,7 +138,8 @@ fun LoginCompose(
                             )
                         }
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { onDone() }),
                     visualTransformation = if (passwordVisibility) VisualTransformation.None
                     else PasswordVisualTransformation()
                 )
@@ -145,11 +156,11 @@ fun LoginCompose(
             } else {
                 OutlinedButton(
                     onClick = {
-                        loginViewModel.attemptLogin(textEmail, textPass, sheredPrefs)
+                        onDone()
                     },
                     colors = ButtonDefaults.buttonColors(colorResource(id = R.color.md_theme_secondary))
                 ) {
-                    Text(text = "Prijava")
+                    Text(text = stringResource(R.string.login_button))
                 }
             }
             Spacer(modifier = Modifier.height(70.dp))
@@ -163,10 +174,7 @@ fun Sandbox() {
         LocalContext.current.resources,
         R.mipmap.ic_launcher, LocalContext.current.theme
     )?.let { drawable ->
-        val bitmap = Bitmap.createBitmap(
-            drawable.intrinsicWidth, drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
+        val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)

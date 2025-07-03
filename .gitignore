@@ -9,3 +9,8 @@
 .cxx
 local.properties
 /app/release/
+.idea/
+/build/
+build/
+/buildSrc/build
+*.jks
