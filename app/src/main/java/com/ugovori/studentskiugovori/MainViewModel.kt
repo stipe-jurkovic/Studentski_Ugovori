@@ -69,7 +69,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val errorText: LiveData<String> = _errorText
 
     init {
-        realm.getWorkedHours().getWorkedHours().forEach() {
+        realm.getWorkedHours().getWorkedHours().forEach {
             addDayWorked(
                 CalendarDay(LocalDate.ofEpochDay(it.date), DayPosition.MonthDate),
                 realmWorkedToRegularWorked(it),
