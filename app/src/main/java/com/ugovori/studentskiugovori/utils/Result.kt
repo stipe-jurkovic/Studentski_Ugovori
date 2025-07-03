@@ -1,5 +1,7 @@
 package com.ugovori.studentskiugovori.utils
 
+import com.ugovori.studentskiugovori.model.dataclasses.Ugovor
+
 sealed class Result {
 
     sealed class NetworkCallResult<T> : Result() {
@@ -15,7 +17,7 @@ sealed class Result {
     }
 
     sealed class ParseResult : Result() {
-        data class Success(val data: Any) : ParseResult()
+        data class Success(val data: MutableList<Ugovor>) : ParseResult()
         data class Error(val error: String) : ParseResult()
     }
 
