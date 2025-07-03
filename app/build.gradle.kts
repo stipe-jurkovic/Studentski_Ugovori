@@ -12,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.ugovori.studentskiugovoritest"
+        applicationId = "com.ugovori.studentskiugovori"
         minSdk = 26
         targetSdk = 35
         versionCode = 6
