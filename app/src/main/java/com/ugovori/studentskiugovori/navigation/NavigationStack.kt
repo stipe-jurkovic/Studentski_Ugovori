@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -37,17 +35,17 @@ import com.ugovori.studentskiugovori.ui.home.HomeCompose
 val topLevelRoutes = listOf(
     TopLevelRoute<FullList>(
         route = FullList,
-        iconId = R.drawable.ic_dashboard_black_24dp,
+        iconId = R.drawable.all_contracts_icon,
         nameId = R.string.svi_ugovori
     ),
     TopLevelRoute<Home>(
         route = Home,
-        iconId = R.drawable.ic_home_black_24dp,
+        iconId = R.drawable.home_icon,
         nameId = R.string.homeText
     ),
     TopLevelRoute<Calculation>(
         route = Calculation,
-        iconId = R.drawable.math_svgrepo_com,
+        iconId = R.drawable.calculation_icon,
         nameId = R.string.izracun
     )
 )
@@ -75,7 +73,7 @@ fun MainCompose(navController: NavHostController, mainViewModel: MainViewModel, 
                     HomeCompose(mainViewModel)
                 }
                 composable<Calculation> {
-                    CalcWholeCompose()
+                    CalcWholeCompose(mainViewModel)
                 }
             }
         }
@@ -98,16 +96,10 @@ fun BottomBar(navController: NavHostController) {
                 selected = false,
                 onClick = {
                     navController.navigate(topLevelRoute.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
                         launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
                 }
@@ -120,15 +112,15 @@ fun BottomBar(navController: NavHostController) {
 @Composable
 fun TopBar(navController: NavController, logout: () -> Unit) {
     val currentDestination =
-        navController.currentBackStackEntryAsState().value?.destination?.route?.split(".")?.lastOrNull() ?: ""
+        navController.currentBackStackEntryAsState().value?.destination?.route?.substringAfterLast(".") ?: ""
     TopAppBar(
         title = { Text(topLevelRoutes.find {
             it.route.toString() == currentDestination
-        }?.nameId?.let { stringResource(it) } ?: "",) },
+        }?.nameId?.let { stringResource(it) } ?: "") },
         actions = {
             Box(Modifier.clickable{ logout() }) {
                 Icon(
-                    painter = painterResource(R.drawable.logout_line_svgrepo_com),
+                    painter = painterResource(R.drawable.logout_icon),
                     contentDescription = "Odjava",
                     modifier = Modifier.size(30.dp)
                 )

@@ -1,6 +1,7 @@
 package com.ugovori.studentskiugovori
 
 import android.content.SharedPreferences
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +20,8 @@ import com.ugovori.studentskiugovori.utils.Result
 import com.ugovori.studentskiugovori.utils.Result.ParseResult
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
+import com.ugovori.studentskiugovori.model.data.calculateDayEarning
+import com.ugovori.studentskiugovori.utils.Result.GenericResult
 import io.realm.Realm
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,6 +32,7 @@ import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
@@ -75,6 +79,12 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         getData()
     }
 
+    fun showSnackbar(message: String, duration: SnackbarDuration) {
+        viewModelScope.launch(Dispatchers.Main) {
+            snackbarHostState.showSnackbar(message, duration = duration)
+        }
+    }
+
     fun getData(refresh: Boolean = false) {
         if (refresh) {
             _isRefreshing.postValue(true)
@@ -95,7 +105,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                                 Locale.getDefault()
                             ).format(System.currentTimeMillis())
                             _generated.postValue(rn)
-                            _ugovori.postValue(parsedData.data as List<Ugovor>?)
+                            _ugovori.postValue(parsedData.data)
 
                             _hourlyPay.postValue(parsedData.data.filter {
                                 it.STATUSNAZIV?.contains("Izdan", ignoreCase = true) == true
@@ -138,6 +148,41 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                     return@launch
                 }
             }
+        }
+    }
+
+    fun tryAddDayWorked(
+        selectionDate: CalendarDay,
+        timeStartSelected: LocalTime,
+        timeEndSelected: LocalTime,
+        hourlyText: String,
+    ) {
+        try {
+            when (val result = calculateDayEarning(
+                date = selectionDate.date,
+                startTime = timeStartSelected,
+                endTime = timeEndSelected,
+                hourly = hourlyText.toBigDecimal(),
+                isOvertimeDay = selectionDate.date.dayOfWeek == DayOfWeek.SUNDAY
+            )) {
+                is GenericResult.Success ->
+                    addDayWorked(
+                        selectionDate,
+                        result.data as WorkedHours
+                    )
+
+                is GenericResult.Error -> {
+                    showSnackbar(
+                        "Greška prilikom dodavanja radnog dana: ${result.error}",
+                        duration = SnackbarDuration.Long
+                    )
+                }
+            }
+        } catch (_: Exception) {
+            showSnackbar(
+                "Greška prilikom dodavanja radnog dana: Netočan unos brojeva",
+                duration = SnackbarDuration.Long
+            )
         }
     }
 
@@ -206,7 +251,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     fun getTextHours(): String {
         var text = "Zarada po danima:\n\n"
-        daysWorked.value.toSortedMap().forEach { (date, workedHours) ->
+        daysWorked.value.toSortedMap().forEach { (_, workedHours) ->
             workedHours.forEach {
                 text += it.toStringExport() + "------------------------\n"
             }

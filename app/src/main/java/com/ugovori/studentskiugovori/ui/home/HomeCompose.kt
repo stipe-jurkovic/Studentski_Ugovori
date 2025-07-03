@@ -124,7 +124,7 @@ fun HomeCompose(mainViewModel: MainViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     item {
                         Icon(
-                            painter = painterResource(R.drawable.error_svgrepo_com),
+                            painter = painterResource(R.drawable.error_icon),
                             contentDescription = "Error",
                             modifier = Modifier.width(100.dp)
                         )
