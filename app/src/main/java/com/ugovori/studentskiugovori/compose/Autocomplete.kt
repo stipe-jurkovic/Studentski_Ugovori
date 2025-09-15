@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import java.math.BigDecimal
 import java.math.MathContext
+import java.math.RoundingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -68,7 +68,7 @@ fun autoComplete(
     selected: BigDecimal = BigDecimal(5.30).round(MathContext(2))
 ): String? {
 
-    var category by remember { mutableStateOf(selected.setScale(2).toPlainString()) }
+    var category by remember { mutableStateOf(selected.setScale(2, RoundingMode.HALF_UP).toPlainString()) }
     val heightTextFields by remember { mutableStateOf(55.dp) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var expanded by remember { mutableStateOf(false) }

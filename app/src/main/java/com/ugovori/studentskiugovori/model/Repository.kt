@@ -2,6 +2,7 @@ package com.ugovori.studentskiugovori.model
 
 import com.ugovori.studentskiugovori.utils.NetworkServiceInterface
 import com.ugovori.studentskiugovori.utils.Result
+import com.ugovori.studentskiugovori.utils.testData
 
 class Repository(private val networkService: NetworkServiceInterface) {
 
@@ -11,6 +12,10 @@ class Repository(private val networkService: NetworkServiceInterface) {
         forceLogin: Boolean,
         timeout: Boolean = false
     ): Result.LoginResult {
+
+        if (username == "demo" && password == "demo184555") {
+            return Result.LoginResult.Success(testData)
+        }
 
         if (username == "" || password == "") {
             return Result.LoginResult.Error("Username or password is empty")

@@ -38,6 +38,7 @@ import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.compose.autoComplete
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalTime
 
 
@@ -110,7 +111,7 @@ fun AddTimeSheet(
             TimeInput(timePickStateEnd)
             hourlyText.value = autoComplete(
                 mainViewModel.hourlyPay.observeAsState().value?.map {
-                    it.setScale(2).toPlainString()
+                    it.setScale(2, RoundingMode.HALF_UP).toPlainString()
                 } ?: emptyList(),
                 mainViewModel.hourlyPay.observeAsState().value?.firstOrNull()
                     ?: BigDecimal(6.06)) ?: ""
