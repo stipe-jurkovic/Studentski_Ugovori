@@ -32,8 +32,8 @@ fun parseUgovore(data: String): ParseResult{
                     ugovoriData.rows.NETO[i] ?: 0.0,
                     ugovoriData.rows.ISPLATANETO[i] ?: 0.0,
                     ugovoriData.rows.VALUTAUNOS[i] ?: "",
-                    ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9) ?: "",
-                    ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9) ?: "",
+                    ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9),
+                    ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9),
                     ugovoriData.rows.CIJENAWEB[i] ?: 0.0,
                     ugovoriData.rows.STATUSWEB[i] ?: 0,
                 )

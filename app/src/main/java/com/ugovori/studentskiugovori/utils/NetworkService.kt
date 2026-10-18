@@ -60,7 +60,7 @@ class NetworkService : NetworkServiceInterface {
     override fun getSamlRequest(): Result.NetworkCallResult<String> {
 
         val request = Request.Builder()
-            .url("https://websc.scst.hr:8445/sc/48/login/aai")
+            .url("https://websc.scst.hr/sc/48/login/aai")
             .get()
             .build()
 
@@ -68,7 +68,7 @@ class NetworkService : NetworkServiceInterface {
         val responseHeaders = response.headers.toList()
         for (i in responseHeaders) {
             if (i.first == "Set-Cookie") {
-                if (i.second.split(";")[0].contains("simpleSAML")) {
+                if (i.second.split(";")[0].contains("SimpleSAML")) {
                     simpleID = i.second.split(";")[0]
                 }
                 if (i.second.split(";")[0].contains("SC48")) {
@@ -80,7 +80,7 @@ class NetworkService : NetworkServiceInterface {
 
         println("GetSAMLRequest: ${response.code} ")
         response.close()
-        return if (response.code == 302 && simpleID != "" && SC48 != "") {
+        return if (response.code == 303 && simpleID != "" && SC48 != "") {
             Result.NetworkCallResult.Success("SAMLRequest got!")
         } else {
             lastTimeLoggedIn = 0L
@@ -108,7 +108,7 @@ class NetworkService : NetworkServiceInterface {
             .get().header("Cookie", ssoID)
             .build()
         val response2 = client.newCall(request2).execute()
-        val doc2 = response2.body?.string()?.let { Jsoup.parse(it) }
+        val doc2 = response2.body.string()?.let { Jsoup.parse(it) }
         response2.close()
 
         val loginLink = doc2?.select("form.login-form")?.attr("action").toString()
@@ -131,7 +131,7 @@ class NetworkService : NetworkServiceInterface {
             .build()
 
         val response3 = client.newCall(request3).execute()
-        val doc3 = response3.body?.string()?.let { Jsoup.parse(it) }
+        val doc3 = response3.body.string()?.let { Jsoup.parse(it) }
         response3.close()
         SAMLResponse = doc3?.select("input[name=SAMLResponse]")?.attr("value").toString()
 
@@ -157,7 +157,7 @@ class NetworkService : NetworkServiceInterface {
             .build()
 
         val response4 = client.newCall(request4).execute()
-        val doc4 = response4.body?.string()?.let { Jsoup.parse(it) }
+        val doc4 = response4.body.string()?.let { Jsoup.parse(it) }
 
         response4.close()
 
@@ -194,7 +194,7 @@ class NetworkService : NetworkServiceInterface {
     }
 
     override fun getUgovoriData(): Result.NetworkCallResult<String> {
-        val baseUrl = "https://websc.scst.hr:8495/sc/48/ugovor/pregled/0"
+        val baseUrl = "https://websc.scst.hr/sc/48/ugovor/pregled/0"
         val reqType = "kendogrid"
         val pageSize = "10000"
 
@@ -207,7 +207,7 @@ class NetworkService : NetworkServiceInterface {
             .build()
 
         val response6 = client.newCall(request6).execute()
-        val doc6 = response6.body?.string()
+        val doc6 = response6.body.string()
 
         println("GetUgovoriData: ${response6.code}")
         response6.close()

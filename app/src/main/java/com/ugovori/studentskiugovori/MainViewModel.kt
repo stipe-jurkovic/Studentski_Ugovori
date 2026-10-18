@@ -36,6 +36,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
 
@@ -115,7 +116,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
                             _isRefreshing.postValue(false)
                             _loadedTxt.postValue(Status.FETCHED)
-                            delay(30)
+                            delay(30.milliseconds)
                             _loadedTxt.postValue(Status.FETCHED_NEW)
                             _cardData.postValue(calculateEarningsAndGetNumbers(parsedData.data))
                         }
@@ -134,7 +135,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
                 is Result.LoginResult.Refresh -> {
                     _loadedTxt.postValue(Status.FETCHED_NEW)
-                    delay(1000)
+                    delay(1000.milliseconds)
                     _isRefreshing.postValue(false)
                     return@launch
                 }
@@ -267,7 +268,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     override fun onCleared() {
         realm.close()
-        super.onCleared()
     }
 
 

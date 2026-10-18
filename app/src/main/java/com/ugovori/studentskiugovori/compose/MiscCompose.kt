@@ -1,5 +1,6 @@
 package com.ugovori.studentskiugovori.compose
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,16 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.ugovori.studentskiugovori.R
 
 @Preview
 @Composable
@@ -34,15 +34,15 @@ fun CircularIndicator() {
         Box(
             Modifier
                 .clip(shape = CircleShape)
-                .background(colorResource(id = R.color.md_theme_onPrimary))
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(16.dp, 16.dp, 16.dp, 16.dp)
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .width(64.dp)
                     .height(64.dp),
-                color = colorResource(id = R.color.md_theme_secondary),
-                trackColor = colorResource(id = R.color.md_theme_secondaryContainer),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                trackColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.24f),
                 strokeWidth = 4.dp,
                 strokeCap = StrokeCap.Round
             )

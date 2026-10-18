@@ -65,6 +65,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
@@ -73,7 +74,7 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
             Text(
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
-                text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                text = dayOfWeek.getDisplayName(TextStyle.SHORT, LocalLocale.current.platformLocale)
                     .replaceFirstChar { it.uppercase() },
             )
         }
@@ -127,7 +128,7 @@ fun calcCompose(): CalendarDay? {
     ) {
         SimpleCalendarTitle(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.tertiaryContainer)
+                .background(color = MaterialTheme.colorScheme.secondaryContainer)
                 .padding(horizontal = 8.dp, vertical = 12.dp),
             currentMonth = visibleMonth.yearMonth,
             goToPrevious = {
@@ -266,7 +267,7 @@ fun Day(
                 width = if (isSelected) 1.dp else 0.dp,
                 color = if (isSelected) selectedItemColor else Color.Transparent,
             )
-            .background(color = MaterialTheme.colorScheme.tertiaryContainer)
+            .background(color = MaterialTheme.colorScheme.secondaryContainer)
             .clickable { onClick(day) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top

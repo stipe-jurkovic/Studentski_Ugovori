@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -56,12 +55,16 @@ import com.ugovori.studentskiugovori.compose.AppTheme
 import androidx.core.graphics.createBitmap
 
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalResources
+
+
 @Preview
 @Composable
 fun LoginPreview() {
     AppTheme {
         LoginCompose(
-            LoginViewModel(Repository(NetworkService())),
+            viewModel { LoginViewModel(Repository(NetworkService())) },
             LocalContext.current.getSharedPreferences("sharedPrefs", 0),
             SnackbarHostState()
         )
@@ -148,8 +151,8 @@ fun LoginCompose(
             if (loginViewModel.showLoading.observeAsState().value == true) {
                 CircularProgressIndicator(
                     modifier = Modifier.width(40.dp),
-                    color = colorResource(id = R.color.md_theme_secondary),
-                    trackColor = colorResource(id = R.color.md_theme_onSecondary),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.onSecondary,
                     strokeWidth = 4.dp,
                     strokeCap = StrokeCap.Round
                 )
@@ -158,7 +161,7 @@ fun LoginCompose(
                     onClick = {
                         onDone()
                     },
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.md_theme_secondary))
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
                 ) {
                     Text(text = stringResource(R.string.login_button))
                 }
@@ -171,7 +174,7 @@ fun LoginCompose(
 @Composable
 fun Sandbox() {
     ResourcesCompat.getDrawable(
-        LocalContext.current.resources,
+        LocalResources.current,
         R.mipmap.ic_launcher, LocalContext.current.theme
     )?.let { drawable ->
         val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)

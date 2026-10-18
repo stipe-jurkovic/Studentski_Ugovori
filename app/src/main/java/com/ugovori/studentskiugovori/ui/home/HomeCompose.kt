@@ -16,6 +16,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -55,7 +56,7 @@ fun HomeCompose(mainViewModel: MainViewModel) {
     Scaffold(
         modifier = Modifier
             .pullRefresh(pullRefreshState)
-            .background(color = colorResource(id = R.color.md_theme_background)),
+            .background(color = MaterialTheme.colorScheme.background),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         contentWindowInsets = WindowInsets(0.dp)
     ) { innerPadding ->
