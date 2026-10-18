@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -25,7 +26,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -99,8 +99,10 @@ fun HomeCompose(mainViewModel: MainViewModel) {
                             }
                         }
                     }
-                    items(ugovori.size) { index ->
-                        val ugovor = ugovori[index]
+                    items(
+                        items = ugovori,
+                        key = { u -> "${u.GODINA}_${u.UGOVOR}" }
+                    ) { ugovor ->
                         if (ugovor.STATUSNAZIV?.contains("Izdan") == true) {
                             UgovorCompose(ugovor)
                         }
@@ -145,9 +147,3 @@ fun HomeCompose(mainViewModel: MainViewModel) {
         }
     }
 }
-
-
-
-
-
-

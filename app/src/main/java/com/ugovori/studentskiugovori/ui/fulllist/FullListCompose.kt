@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -80,8 +81,11 @@ fun FullListCompose(mainViewModel: MainViewModel) {
                         )
                     }
                     LazyColumn {
-                        items(ugovori.size) { index ->
-                            UgovorCompose(ugovor = ugovori[index])
+                        items(
+                            items = ugovori,
+                            key = { u -> "${u.GODINA}_${u.UGOVOR}" }
+                        ) { ugovor ->
+                            UgovorCompose(ugovor = ugovor)
                         }
                     }
                 }
