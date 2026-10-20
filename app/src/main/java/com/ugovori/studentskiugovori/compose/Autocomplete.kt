@@ -50,7 +50,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun autoComplete(
@@ -77,7 +76,7 @@ fun autoComplete(
 
     Column(
         modifier = Modifier
-            .padding(30.dp)
+            .padding(10.dp)
             .widthIn(80.dp)
             .clickable(
                 interactionSource = interactionSource,
