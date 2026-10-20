@@ -1,6 +1,7 @@
 package com.ugovori.studentskiugovori
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.LiveData
@@ -24,11 +25,13 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.ugovori.studentskiugovori.model.data.calculateDayEarning
 import com.ugovori.studentskiugovori.utils.Result.GenericResult
 import io.realm.Realm
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.math.MathContext
@@ -71,8 +74,21 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val errorText: LiveData<String> = _errorText
     val showGithubMessage: LiveData<Boolean> = repository.showGithubMessage.asLiveData()
 
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        Log.e("MainViewModel", "Uncaught coroutine exception", exception)
+
+        viewModelScope.launch(Dispatchers.Main) {
+            _isRefreshing.value = false
+            _loadedTxt.value = Status.FETCHING_ERROR
+            _errorText.value = exception.message ?: "Unknown error"
+
+            snackbarHostState.showSnackbar(
+                "Greška prilikom dohvaćanja podataka"
+            )
+        }
+    }
     fun hideGithubMessage() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
             repository.hideGithubMessage()
         }
     }
@@ -99,13 +115,15 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             _isRefreshing.postValue(true)
         }
         _loadedTxt.postValue(Status.FETCHING)
-        viewModelScope.launch(Dispatchers.IO) {
-            when (val result = repository.getData(
-                sharedPref.getString("username", "") ?: "",
-                sharedPref.getString("password", "") ?: "",
-                forceLogin = false,
-                timeout = !refresh
-            )) {
+        viewModelScope.launch(handler) {
+            when (val result = withContext(Dispatchers.IO) {
+                repository.getData(
+                    sharedPref.getString("username", "") ?: "",
+                    sharedPref.getString("password", "") ?: "",
+                    forceLogin = false,
+                    timeout = !refresh
+                )
+            }) {
                 is Result.LoginResult.Success -> {
                     when (val parsedData = parseUgovore(result.data as String)) {
                         is ParseResult.Success -> {

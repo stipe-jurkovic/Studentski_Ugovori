@@ -1,6 +1,5 @@
 package com.ugovori.studentskiugovori.utils
 
-
 interface NetworkServiceInterface {
 
         val lastTimeLoggedIn: Long
@@ -13,7 +12,11 @@ interface NetworkServiceInterface {
 
         fun getSamlRequest(): Result.NetworkCallResult<String>
 
-        fun getSamlResponse(username: String, password: String): Result.NetworkCallResult<String>
+        fun getSsoRedirect(): Result.NetworkCallResult<String>
+
+        fun getLoginPage(): Result.NetworkCallResult<String>
+
+        fun submitLogin(username: String, password: String): Result.NetworkCallResult<String>
 
         fun sendSAMLToWebsc(): Result.NetworkCallResult<String>
 
