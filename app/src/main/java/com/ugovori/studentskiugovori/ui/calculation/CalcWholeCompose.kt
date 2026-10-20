@@ -7,8 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,7 +56,7 @@ fun CalcWholeCompose(mainViewModel: MainViewModel) {
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text(stringResource(R.string.add)) },
-                icon = { Icon(Icons.Filled.Edit, contentDescription = "") },
+                icon = { Icon(painter = painterResource(id = R.drawable.edit), contentDescription = "") },
                 onClick = {
                     showSheet()
                 })
@@ -114,7 +113,7 @@ fun AddTimeSheet(
                     it.setScale(2, RoundingMode.HALF_UP).toPlainString()
                 } ?: emptyList(),
                 mainViewModel.hourlyPay.observeAsState().value?.firstOrNull()
-                    ?: BigDecimal(6.06)) ?: ""
+                    ?: BigDecimal(6.56)) ?: ""
             Spacer(modifier = Modifier.padding(bottom = 20.dp))
         }
 

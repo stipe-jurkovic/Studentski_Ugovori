@@ -28,7 +28,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -53,11 +54,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.okhttp)
     implementation(libs.jsoup)
     implementation(libs.koin.android)
@@ -68,8 +66,6 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material.icons.core)
-    implementation(libs.androidx.compose.material.icons.extended)
 
     // Android Studio Preview support
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -77,7 +73,6 @@ dependencies {
 
     //compose livedata state
     implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.swiperefreshlayout)
 
     //EncryptedSharedPreferences
     implementation(libs.androidx.security.crypto)
@@ -86,7 +81,6 @@ dependencies {
     implementation(libs.androidx.compose.material)
 
     // json
-    implementation(libs.gson)
     implementation(libs.kotlinx.serialization.json)
 
     // The compose calendar library

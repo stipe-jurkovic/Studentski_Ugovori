@@ -27,8 +27,6 @@ kotlinxSerializationJson = "1.11.0"
 calendar = "2.10.1"
 
 [libraries]
-androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
-androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }

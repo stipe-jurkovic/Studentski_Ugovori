@@ -16,4 +16,5 @@
     <string name="enter_password_placeholder">Unesi lozinku</string>
     <string name="studentski_ugovori_title_login">Studentski Ugovori</string>
     <string name="login_button">Prijava</string>
+    <string name="tvoji_podaci_su_sigurni_i_ne_dijele_se_s_tre_im_stranama">Tvoji podaci su sigurni i ne dijele se s trećim stranama.</string>
 </resources>

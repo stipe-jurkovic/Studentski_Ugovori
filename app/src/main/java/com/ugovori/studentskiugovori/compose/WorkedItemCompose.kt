@@ -1,21 +1,9 @@
 package com.ugovori.studentskiugovori.compose
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -23,15 +11,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ugovori.studentskiugovori.MainViewModel
+import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.model.dataclasses.WorkedHours
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
@@ -98,7 +86,7 @@ fun WorkedItemCompose(
                 contentColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "Edit")
+            Icon(painter = painterResource(id = R.drawable.delete), contentDescription = "Delete")
 
         }
     }
@@ -108,15 +96,16 @@ fun WorkedItemCompose(
 @Composable
 fun ThreeLineListItemWithOverlineAndSupporting(
     workedHours: WorkedHours = WorkedHours(
-    UUID.randomUUID(),
-    LocalDate.now(),
-    LocalTime.now(),
-    LocalTime.now(),
-    BigDecimal(100),
-    BigDecimal(10),
-    BigDecimal(10),
-    true
-)) {
+        UUID.randomUUID(),
+        LocalDate.now(),
+        LocalTime.now(),
+        LocalTime.now(),
+        BigDecimal(100),
+        BigDecimal(10),
+        BigDecimal(10),
+        true
+    )
+) {
     val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
 
     Column {
@@ -133,8 +122,12 @@ fun ThreeLineListItemWithOverlineAndSupporting(
                     }"
                 )
             },
-            supportingContent = { Text("Satnica: " + workedHours.hourlyPay.toString() +" €"
-            + "  Sati: " + workedHours.hours.toString()) },
+            supportingContent = {
+                Text(
+                    "Satnica: " + workedHours.hourlyPay.toString() + " €"
+                            + "  Sati: " + workedHours.hours.toString()
+                )
+            },
             leadingContent = {},
             trailingContent = {
                 Button(
@@ -149,7 +142,10 @@ fun ThreeLineListItemWithOverlineAndSupporting(
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Edit")
+                    Icon(
+                        painter = painterResource(id = R.drawable.delete),
+                        contentDescription = "Delete"
+                    )
 
                 }
             }
