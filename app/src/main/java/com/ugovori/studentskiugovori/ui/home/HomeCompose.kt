@@ -36,6 +36,7 @@ import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.Status
 import com.ugovori.studentskiugovori.compose.CardCompose
 import com.ugovori.studentskiugovori.compose.CircularIndicator
+import com.ugovori.studentskiugovori.compose.GithubMessage
 import com.ugovori.studentskiugovori.model.dataclasses.CardData
 import com.ugovori.studomatisvu.compose.UgovorCompose
 
@@ -51,6 +52,7 @@ fun HomeCompose(mainViewModel: MainViewModel) {
     })
     val ugovori = mainViewModel.ugovori.observeAsState().value
     val error = mainViewModel.errorText.observeAsState().value
+    val showGithubMessage = mainViewModel.showGithubMessage.observeAsState(true).value
 
 
     Scaffold(
@@ -97,6 +99,11 @@ fun HomeCompose(mainViewModel: MainViewModel) {
                                     modifier = Modifier.padding(8.dp, 4.dp)
                                 )
                             }
+                        }
+                    }
+                    if (showGithubMessage) {
+                        item {
+                            GithubMessage(mainViewModel::hideGithubMessage)
                         }
                     }
                     items(

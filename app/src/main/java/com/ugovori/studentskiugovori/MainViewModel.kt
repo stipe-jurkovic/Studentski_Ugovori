@@ -6,6 +6,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.ugovori.studentskiugovori.model.Repository
 import com.ugovori.studentskiugovori.model.data.calculateEarningsAndGetNumbers
@@ -68,6 +69,13 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
     val hourlyPay: LiveData<List<BigDecimal>> = _hourlyPay
     val errorText: LiveData<String> = _errorText
+    val showGithubMessage: LiveData<Boolean> = repository.showGithubMessage.asLiveData()
+
+    fun hideGithubMessage() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.hideGithubMessage()
+        }
+    }
 
     init {
         realm.getWorkedHours().getWorkedHours().forEach {

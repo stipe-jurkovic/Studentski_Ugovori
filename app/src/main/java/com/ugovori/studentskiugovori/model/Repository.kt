@@ -1,10 +1,25 @@
 package com.ugovori.studentskiugovori.model
 
+import android.content.SharedPreferences
 import com.ugovori.studentskiugovori.utils.NetworkServiceInterface
+import com.ugovori.studentskiugovori.utils.PreferenceHelper.booleanFlow
+import com.ugovori.studentskiugovori.utils.PreferenceHelper.set
 import com.ugovori.studentskiugovori.utils.Result
+import com.ugovori.studentskiugovori.utils.SPKey
 import com.ugovori.studentskiugovori.utils.testData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
-class Repository(private val networkService: NetworkServiceInterface) {
+class Repository(
+    private val networkService: NetworkServiceInterface,
+    private val sharedPreferences: SharedPreferences? = null
+) {
+
+    val showGithubMessage: Flow<Boolean> = sharedPreferences?.booleanFlow(SPKey.SHOW_GITHUB_MESSAGE.toString(), true) ?: flowOf(false)
+
+    suspend fun hideGithubMessage() {
+        sharedPreferences?.let { it[SPKey.SHOW_GITHUB_MESSAGE] = false }
+    }
 
     suspend fun getData(
         username: String,
