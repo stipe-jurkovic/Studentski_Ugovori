@@ -33,7 +33,7 @@ import com.ugovori.studentskiugovori.MainViewModel
 import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.Status
 import com.ugovori.studentskiugovori.compose.CircularIndicator
-import com.ugovori.studomatisvu.compose.UgovorCompose
+import com.ugovori.studentskiugovori.compose.UgovorCompose
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

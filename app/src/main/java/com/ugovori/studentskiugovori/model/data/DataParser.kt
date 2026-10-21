@@ -23,19 +23,19 @@ fun parseUgovore(data: String): ParseResult{
         for (i in 0..<ugovoriData.total) {
             lista.add(
                 Ugovor(
-                    ugovoriData.rows.GODINA[i] ?: 0,
-                    ugovoriData.rows.UGOVOR[i] ?: 0,
-                    ugovoriData.rows.STATUSNAZIV[i] ?: "",
-                    ugovoriData.rows.PARTNERNAZIVWEB[i] ?: "",
-                    ugovoriData.rows.PARTNERNAZIV[i] ?: "",
-                    ugovoriData.rows.POSAONAZIV[i] ?: "",
-                    ugovoriData.rows.NETO[i] ?: 0.0,
-                    ugovoriData.rows.ISPLATANETO[i] ?: 0.0,
-                    ugovoriData.rows.VALUTAUNOS[i] ?: "",
-                    ugovoriData.rows.RADIOODWEB[i].toString().dropLast(9),
-                    ugovoriData.rows.RADIODOWEB[i].toString().dropLast(9),
-                    ugovoriData.rows.CIJENAWEB[i] ?: 0.0,
-                    ugovoriData.rows.STATUSWEB[i] ?: 0,
+                    ugovoriData.rows.GODINA.getOrNull(i) ?: 0,
+                    ugovoriData.rows.UGOVOR.getOrNull(i) ?: 0,
+                    ugovoriData.rows.STATUSNAZIV.getOrNull(i) ?: "",
+                    ugovoriData.rows.PARTNERNAZIVWEB.getOrNull(i) ?: "",
+                    ugovoriData.rows.PARTNERNAZIV.getOrNull(i) ?: "",
+                    ugovoriData.rows.POSAONAZIV.getOrNull(i) ?: "",
+                    ugovoriData.rows.NETO.getOrNull(i) ?: 0.0,
+                    ugovoriData.rows.ISPLATANETO.getOrNull(i) ?: 0.0,
+                    ugovoriData.rows.VALUTAUNOS.getOrNull(i) ?: "",
+                    ugovoriData.rows.RADIOODWEB.getOrNull(i)?.let { if (it.length >= 9) it.dropLast(9) else it } ?: "",
+                    ugovoriData.rows.RADIODOWEB.getOrNull(i)?.let { if (it.length >= 9) it.dropLast(9) else it } ?: "",
+                    ugovoriData.rows.CIJENAWEB.getOrNull(i) ?: 0.0,
+                    ugovoriData.rows.STATUSWEB.getOrNull(i) ?: 0,
                 )
             )
         }
@@ -101,7 +101,7 @@ fun calculateDayEarning(
             time += BigDecimal(16)
             overtime += end - otNightStart
         }
-    } else if (start >= otMorningEnd && start < otNightStart) {
+    } else if (start in otMorningEnd..<otNightStart) {
         if (end <= otNightStart) {
             time += end - start
         } else if (end > otNightStart) {

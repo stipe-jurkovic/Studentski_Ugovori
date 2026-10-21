@@ -38,7 +38,7 @@ import com.ugovori.studentskiugovori.compose.CardCompose
 import com.ugovori.studentskiugovori.compose.CircularIndicator
 import com.ugovori.studentskiugovori.compose.GithubMessage
 import com.ugovori.studentskiugovori.model.dataclasses.CardData
-import com.ugovori.studomatisvu.compose.UgovorCompose
+import com.ugovori.studentskiugovori.compose.UgovorCompose
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.ugovori.studomatisvu.compose
+package com.ugovori.studentskiugovori.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,14 +25,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.ugovori.studentskiugovori.R
-import com.ugovori.studentskiugovori.compose.AppTheme
 import com.ugovori.studentskiugovori.model.dataclasses.Ugovor
 
 @Preview
