@@ -46,16 +46,6 @@ class Repository(
             return@withLock Result.LoginResult.Error("Username or password is empty")
         }
 
-        if (
-            timeout &&
-            System.currentTimeMillis() - networkService.lastTimeGotData <
-            DATA_REFRESH_TIMEOUT_MS
-        ) {
-            return@withLock Result.LoginResult.Refresh(
-                "Data fresh enough, not refreshing"
-            )
-        }
-
         try {
             if (shouldLogin(forceLogin)) {
                 performLogin(username, password)?.let {
@@ -63,12 +53,22 @@ class Repository(
                 }
             }
 
+            if (
+                timeout &&
+                System.currentTimeMillis() - networkService.lastTimeGotData <
+                DATA_REFRESH_TIMEOUT_MS
+            ) {
+                return@withLock Result.LoginResult.Refresh(
+                    "Data fresh enough, not refreshing"
+                )
+            }
+
             val ugovoriData = networkService.getUgovoriData().getOr {
                 return@withLock Result.LoginResult.Error(
                     "Error getting data: $it"
                 )
             }
-
+            if (forceLogin) { networkService. resetLastTimeGotData() }
             Result.LoginResult.Success(ugovoriData)
         } catch (e: CancellationException) {
             throw e
