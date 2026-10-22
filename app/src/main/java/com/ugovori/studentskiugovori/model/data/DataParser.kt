@@ -4,8 +4,8 @@ import com.ugovori.studentskiugovori.model.dataclasses.CardData
 import com.ugovori.studentskiugovori.model.dataclasses.Ugovor
 import com.ugovori.studentskiugovori.model.dataclasses.UgovoriData
 import com.ugovori.studentskiugovori.model.dataclasses.WorkedHours
-import com.ugovori.studentskiugovori.utils.Result.ParseResult
 import com.ugovori.studentskiugovori.utils.Result.GenericResult
+import com.ugovori.studentskiugovori.utils.Result.ParseResult
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -16,7 +16,7 @@ import java.util.UUID
 
 private val json = Json { ignoreUnknownKeys = true }
 
-fun parseUgovore(data: String): ParseResult{
+fun parseUgovore(data: String): ParseResult {
     try {
         val ugovoriData = json.decodeFromString<UgovoriData>(data)
         val lista = mutableListOf<Ugovor>()
@@ -32,16 +32,17 @@ fun parseUgovore(data: String): ParseResult{
                     ugovoriData.rows.NETO.getOrNull(i) ?: 0.0,
                     ugovoriData.rows.ISPLATANETO.getOrNull(i) ?: 0.0,
                     ugovoriData.rows.VALUTAUNOS.getOrNull(i) ?: "",
-                    ugovoriData.rows.RADIOODWEB.getOrNull(i)?.let { if (it.length >= 9) it.dropLast(9) else it } ?: "",
-                    ugovoriData.rows.RADIODOWEB.getOrNull(i)?.let { if (it.length >= 9) it.dropLast(9) else it } ?: "",
+                    ugovoriData.rows.RADIOODWEB.getOrNull(i)
+                        ?.let { if (it.length >= 9) it.dropLast(9) else it } ?: "",
+                    ugovoriData.rows.RADIODOWEB.getOrNull(i)
+                        ?.let { if (it.length >= 9) it.dropLast(9) else it } ?: "",
                     ugovoriData.rows.CIJENAWEB.getOrNull(i) ?: 0.0,
                     ugovoriData.rows.STATUSWEB.getOrNull(i) ?: 0,
                 )
             )
         }
         return ParseResult.Success(lista)
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
         return ParseResult.Error(e.message ?: "Error parsing data")
     }
 }

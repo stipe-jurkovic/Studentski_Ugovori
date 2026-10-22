@@ -37,8 +37,8 @@ import com.ugovori.studentskiugovori.Status
 import com.ugovori.studentskiugovori.compose.CardCompose
 import com.ugovori.studentskiugovori.compose.CircularIndicator
 import com.ugovori.studentskiugovori.compose.GithubMessage
-import com.ugovori.studentskiugovori.model.dataclasses.CardData
 import com.ugovori.studentskiugovori.compose.UgovorCompose
+import com.ugovori.studentskiugovori.model.dataclasses.CardData
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -128,10 +128,12 @@ fun HomeCompose(mainViewModel: MainViewModel) {
                     }
                 }
 
-            } else if(loadedTxt == Status.FETCHING_ERROR) {
-                LazyColumn(modifier = Modifier.fillMaxSize(),
+            } else if (loadedTxt == Status.FETCHING_ERROR) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     item {
                         Icon(
                             painter = painterResource(R.drawable.error_icon),

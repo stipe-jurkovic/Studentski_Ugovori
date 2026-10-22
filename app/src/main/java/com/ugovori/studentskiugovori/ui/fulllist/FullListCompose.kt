@@ -65,9 +65,9 @@ fun FullListCompose(mainViewModel: MainViewModel) {
                 .padding(innerPadding),
         ) {
             PullRefreshIndicator(
-            isRefreshing, pullRefreshState, Modifier
-                .align(Alignment.TopCenter)
-                .zIndex(2f)
+                isRefreshing, pullRefreshState, Modifier
+                    .align(Alignment.TopCenter)
+                    .zIndex(2f)
             )
             if (!ugovori.isNullOrEmpty()) {
                 Column(

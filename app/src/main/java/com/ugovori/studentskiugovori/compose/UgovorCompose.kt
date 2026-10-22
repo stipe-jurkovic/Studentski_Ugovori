@@ -35,7 +35,7 @@ import com.ugovori.studentskiugovori.model.dataclasses.Ugovor
 @Preview
 @Composable
 fun UgovorPreview() {
-    var showFull : Boolean by remember { mutableStateOf (false) }
+    var showFull: Boolean by remember { mutableStateOf(false) }
     AppTheme {
         Card(
             onClick = { showFull = !showFull }, modifier = Modifier
@@ -85,7 +85,7 @@ fun UgovorPreview() {
 
 @Composable
 fun UgovorCompose(ugovor: Ugovor) {
-    var showFull : Boolean by remember { mutableStateOf (false) }
+    var showFull: Boolean by remember { mutableStateOf(false) }
     val shadow = Shadow(MaterialTheme.colorScheme.scrim, Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
@@ -155,6 +155,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
         }
     }
 }
+
 @Composable
 fun UgovorComposeMini(ugovor: Ugovor) {
 
@@ -185,11 +186,11 @@ fun UgovorComposeMini(ugovor: Ugovor) {
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
-            if(ugovor.STATUSNAZIV?.contains("Ispl") == true){
-            UgovorText(
-                "Neto (Isplata neto): ",
-                ugovor.NETO.toString() + " (" + ugovor.ISPLATANETO.toString() + ")" + " " + ugovor.VALUTAUNOS
-            )
+            if (ugovor.STATUSNAZIV?.contains("Ispl") == true) {
+                UgovorText(
+                    "Neto (Isplata neto): ",
+                    ugovor.NETO.toString() + " (" + ugovor.ISPLATANETO.toString() + ")" + " " + ugovor.VALUTAUNOS
+                )
             }
 
         }

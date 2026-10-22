@@ -42,9 +42,11 @@ fun getWeekPageTitle(week: Week): String {
         firstDate.yearMonth == lastDate.yearMonth -> {
             firstDate.yearMonth.displayText()
         }
+
         firstDate.year == lastDate.year -> {
             "${firstDate.month.displayText(short = false)} - ${lastDate.yearMonth.displayText()}"
         }
+
         else -> {
             "${firstDate.yearMonth.displayText()} - ${lastDate.yearMonth.displayText()}"
         }

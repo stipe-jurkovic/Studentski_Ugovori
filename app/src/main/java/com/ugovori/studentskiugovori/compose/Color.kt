@@ -1,4 +1,5 @@
 package com.ugovori.studentskiugovori.compose
+
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF415F91)
@@ -36,7 +37,6 @@ val surfaceContainerLowLight = Color(0xFFF3F3FA)
 val surfaceContainerLight = Color(0xFFEDEDF4)
 val surfaceContainerHighLight = Color(0xFFE7E8EE)
 val surfaceContainerHighestLight = Color(0xFFE2E2E9)
-
 
 
 val primaryDark = Color(0xFFAAC7FF)

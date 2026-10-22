@@ -12,7 +12,7 @@ sealed class Result {
     sealed class LoginResult : Result() {
         data class Success(val data: Any) : LoginResult()
 
-        data class Refresh(val string: String):LoginResult()
+        data class Refresh(val string: String) : LoginResult()
         data class Error(val error: String) : LoginResult()
     }
 
@@ -22,7 +22,7 @@ sealed class Result {
     }
 
     sealed class GenericResult : Result() {
-        data class Success(val data: Any) :GenericResult()
+        data class Success(val data: Any) : GenericResult()
         data class Error(val error: String) : GenericResult()
     }
 

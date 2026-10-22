@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Studentski Ugovori</string>
-    <string name="title_home">Početna</string>
-    <string name="title_full_list">Svi ugovori</string>
-    <string name="title_izracun">Izračun</string>
     <string name="title_log_out">Odjavi se</string>
     <string name="homeText">Početna</string>
     <string name="svi_ugovori">Svi ugovori</string>
@@ -18,7 +15,6 @@
     <string name="login_button">Prijava</string>
     <string name="tvoji_podaci_su_sigurni_i_ne_dijele_se_s_tre_im_stranama">Tvoji podaci su sigurni i ne dijele se s trećim stranama.</string>
     <string name="github_repo_url">https://github.com/stipe-jurkovic/Studentski_Ugovori</string>
-    <string name="pogledaj_izvorni_kod">Pogledaj izvorni kod</string>
     <string name="istra_i_projekt_ili_doprinesi_njegovom_razvoju_na_githubu">Istraži projekt ili doprinesi njegovom razvoju na GitHubu.</string>
     <string name="studentski_ugovori_je_sada_na_githubu">Studentski Ugovori su sada na GitHubu</string>
     <string name="close">Zatvori</string>

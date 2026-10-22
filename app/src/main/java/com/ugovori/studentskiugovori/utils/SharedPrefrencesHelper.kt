@@ -40,24 +40,26 @@ object PreferenceHelper {
         }
     }
 
-    fun SharedPreferences.booleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> = callbackFlow {
-        trySend(getBoolean(key, defaultValue))
+    fun SharedPreferences.booleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> =
+        callbackFlow {
+            trySend(getBoolean(key, defaultValue))
 
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
-            if (changedKey == key) {
-                trySend(getBoolean(key, defaultValue))
+            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+                if (changedKey == key) {
+                    trySend(getBoolean(key, defaultValue))
+                }
+            }
+
+            try {
+                registerOnSharedPreferenceChangeListener(listener)
+                awaitClose {
+                    try {
+                        unregisterOnSharedPreferenceChangeListener(listener)
+                    } catch (_: Exception) {
+                    }
+                }
+            } catch (_: UnsupportedOperationException) {
+                awaitClose {}
             }
         }
-
-        try {
-            registerOnSharedPreferenceChangeListener(listener)
-            awaitClose {
-                try {
-                    unregisterOnSharedPreferenceChangeListener(listener)
-                } catch (_: Exception) {}
-            }
-        } catch (_: UnsupportedOperationException) {
-            awaitClose {}
-        }
-    }
 }

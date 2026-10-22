@@ -53,7 +53,11 @@ val topLevelRoutes = listOf(
 )
 
 @Composable
-fun MainCompose(navController: NavHostController, mainViewModel: MainViewModel, logout: () -> Unit) {
+fun MainCompose(
+    navController: NavHostController,
+    mainViewModel: MainViewModel,
+    logout: () -> Unit
+) {
     AppTheme {
         Scaffold(
             topBar = { TopBar(navController, logout) },
@@ -89,7 +93,8 @@ fun BottomBar(navController: NavHostController) {
 
     NavigationBar {
         topLevelRoutes.forEach { topLevelRoute ->
-            val isSelected = currentDestination?.hierarchy?.any { it.hasRoute(topLevelRoute.route::class) } == true
+            val isSelected =
+                currentDestination?.hierarchy?.any { it.hasRoute(topLevelRoute.route::class) } == true
             NavigationBarItem(
                 icon = {
                     Icon(

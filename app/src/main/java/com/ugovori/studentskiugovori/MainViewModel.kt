@@ -9,7 +9,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
 import com.ugovori.studentskiugovori.model.Repository
+import com.ugovori.studentskiugovori.model.data.calculateDayEarning
 import com.ugovori.studentskiugovori.model.data.calculateEarningsAndGetNumbers
 import com.ugovori.studentskiugovori.model.data.parseUgovore
 import com.ugovori.studentskiugovori.model.dataclasses.CardData
@@ -19,11 +22,8 @@ import com.ugovori.studentskiugovori.model.dataclasses.WorkedHoursRealm
 import com.ugovori.studentskiugovori.model.dataclasses.toStringExport
 import com.ugovori.studentskiugovori.model.getWorkedHours
 import com.ugovori.studentskiugovori.utils.Result
-import com.ugovori.studentskiugovori.utils.Result.ParseResult
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.DayPosition
-import com.ugovori.studentskiugovori.model.data.calculateDayEarning
 import com.ugovori.studentskiugovori.utils.Result.GenericResult
+import com.ugovori.studentskiugovori.utils.Result.ParseResult
 import io.realm.Realm
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -87,6 +87,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             )
         }
     }
+
     fun hideGithubMessage() {
         viewModelScope.launch(Dispatchers.IO + handler) {
             repository.hideGithubMessage()

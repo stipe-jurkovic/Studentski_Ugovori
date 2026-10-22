@@ -21,13 +21,17 @@ class MainActivity : AppCompatActivity() {
         val sharedPref: SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
         val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
         enableEdgeToEdge()
-        if (sharedPref.getString("username", "") == "" || sharedPref.getString("password", "") == "") {
+        if (sharedPref.getString("username", "") == "" || sharedPref.getString(
+                "password",
+                ""
+            ) == ""
+        ) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         } else {
             setContent {
                 AppTheme {
-                    MainCompose( rememberNavController(), mainViewModel, logout = { logout() })
+                    MainCompose(rememberNavController(), mainViewModel, logout = { logout() })
                 }
             }
         }

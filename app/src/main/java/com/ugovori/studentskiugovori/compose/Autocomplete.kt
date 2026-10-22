@@ -20,10 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.res.painterResource
-import com.ugovori.studentskiugovori.R
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,8 +34,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import com.ugovori.studentskiugovori.R
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -68,7 +66,11 @@ fun autoComplete(
     selected: BigDecimal = BigDecimal(5.30).round(MathContext(2))
 ): String? {
 
-    var category by remember { mutableStateOf(selected.setScale(2, RoundingMode.HALF_UP).toPlainString()) }
+    var category by remember {
+        mutableStateOf(
+            selected.setScale(2, RoundingMode.HALF_UP).toPlainString()
+        )
+    }
     val heightTextFields by remember { mutableStateOf(55.dp) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var expanded by remember { mutableStateOf(false) }
@@ -102,8 +104,9 @@ fun autoComplete(
                         .border(
                             width = 1.8.dp,
                             color = MaterialTheme.colorScheme.outline,
-                            shape = RoundedCornerShape(15.dp, 15.dp,0.dp, 0.dp )
-                        ).clip(RoundedCornerShape(15.dp, 15.dp,0.dp, 0.dp ))
+                            shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp)
+                        )
+                        .clip(RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
                         .onGloballyPositioned { coordinates ->
                             textFieldSize = coordinates.size.toSize()
                         },
@@ -130,7 +133,8 @@ fun autoComplete(
                     }
                 )
             }
-            val animationSpecCustom = spring(dampingRatio = 0.8f, stiffness = 1000f, visibilityThreshold = 0.1f)
+            val animationSpecCustom =
+                spring(dampingRatio = 0.8f, stiffness = 1000f, visibilityThreshold = 0.1f)
             AnimatedVisibility(
                 visible = expanded,
                 enter = fadeIn(animationSpec = animationSpecCustom),
