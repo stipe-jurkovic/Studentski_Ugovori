@@ -52,7 +52,7 @@ fun CardCompose(cardData: CardData = CardData()) {
                     .align(Alignment.TopStart)
             )
             {
-                Column() {
+                Column {
                     Text(
                         text = "Broj izdanih ugovora: " + cardData.numOfIzdanih,
                         color = Color.White,

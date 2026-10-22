@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.core.CalendarDay
@@ -55,14 +59,14 @@ fun CalcWholeCompose(mainViewModel: MainViewModel) {
 
     Scaffold(
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text(stringResource(R.string.add)) },
-                icon = { Icon(Icons.Filled.Edit, contentDescription = "") },
-                onClick = {
-                    showSheet()
-                })
-        },
-        contentWindowInsets = WindowInsets(0.dp)
+            ExtendedFloatingActionButton(text = { Text(stringResource(R.string.add)) }, icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.edit), contentDescription = ""
+                )
+            }, onClick = {
+                showSheet()
+            })
+        }, contentWindowInsets = WindowInsets(0.dp)
     ) { contentPadding ->
 
         BottomSheetScaffold(
@@ -72,8 +76,7 @@ fun CalcWholeCompose(mainViewModel: MainViewModel) {
                     AddTimeSheet(
                         mainViewModel = mainViewModel,
                         selection = selection,
-                        showSheet = { showSheet(it) }
-                    )
+                        showSheet = { showSheet(it) })
                 }
             },
             sheetPeekHeight = 0.dp,
@@ -90,7 +93,7 @@ fun CalcWholeCompose(mainViewModel: MainViewModel) {
 fun AddTimeSheet(
     mainViewModel: MainViewModel,
     selection: CalendarDay? = null,
-    showSheet:(show:Boolean)-> Unit = {}
+    showSheet: (show: Boolean) -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -99,61 +102,64 @@ fun AddTimeSheet(
     val hourlyText = remember { mutableStateOf(mainViewModel.hourlyPay.value.toString()) }
 
     ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = { showSheet(false) }
-    ) {
+        sheetState = sheetState, onDismissRequest = { showSheet(false) })
+    {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
+                .imePadding()
         ) {
             TimeInput(timePickStateStart)
             TimeInput(timePickStateEnd)
-            hourlyText.value = autoComplete(
-                mainViewModel.hourlyPay.observeAsState().value?.map {
-                    it.setScale(2, RoundingMode.HALF_UP).toPlainString()
-                } ?: emptyList(),
-                mainViewModel.hourlyPay.observeAsState().value?.firstOrNull()
-                    ?: BigDecimal(6.06)) ?: ""
-            Spacer(modifier = Modifier.padding(bottom = 20.dp))
-        }
+            hourlyText.value = autoComplete(mainViewModel.hourlyPay.observeAsState().value?.map {
+                it.setScale(2, RoundingMode.HALF_UP).toPlainString()
+            } ?: emptyList(),
+                mainViewModel.hourlyPay.observeAsState().value?.firstOrNull() ?: BigDecimal(6.56))
+                ?: ""
+            Spacer(Modifier.height(8.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier
-                .padding(26.dp, 0.dp, 26.dp, 30.dp)
-                .fillMaxWidth()
-        ) {
-            Button(onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        showSheet(false)
-                    }
-                }
-            }) {
-                Text(text = stringResource(R.string.cancel))
-            }
-
-            Button(onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        showSheet(false)
-
-                        selection?.let { selectionDate ->
-                            mainViewModel.tryAddDayWorked(
-                                selectionDate = selectionDate,
-                                timeEndSelected = LocalTime.of(timePickStateEnd.hour, timePickStateEnd.minute),
-                                timeStartSelected = LocalTime.of(
-                                    timePickStateStart.hour, timePickStateStart.minute
-                                ),
-                                hourlyText = hourlyText.value,
-                            )
-
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier
+                    .padding(26.dp, 0.dp, 26.dp, 30.dp)
+                    .fillMaxWidth()
+            ) {
+                Button(onClick = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showSheet(false)
                         }
                     }
+                }) {
+                    Text(text = stringResource(R.string.cancel))
                 }
-            }) {
-                Text(text = stringResource(R.string.save))
+
+                Button(onClick = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showSheet(false)
+
+                            selection?.let { selectionDate ->
+                                mainViewModel.tryAddDayWorked(
+                                    selectionDate = selectionDate,
+                                    timeEndSelected = LocalTime.of(
+                                        timePickStateEnd.hour, timePickStateEnd.minute
+                                    ),
+                                    timeStartSelected = LocalTime.of(
+                                        timePickStateStart.hour, timePickStateStart.minute
+                                    ),
+                                    hourlyText = hourlyText.value,
+                                )
+
+                            }
+                        }
+                    }
+                }) {
+                    Text(text = stringResource(R.string.save))
+                }
             }
         }
     }

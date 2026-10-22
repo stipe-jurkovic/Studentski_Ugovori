@@ -1,13 +1,18 @@
 package com.ugovori.studentskiugovori
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
 import com.ugovori.studentskiugovori.model.Repository
+import com.ugovori.studentskiugovori.model.data.calculateDayEarning
 import com.ugovori.studentskiugovori.model.data.calculateEarningsAndGetNumbers
 import com.ugovori.studentskiugovori.model.data.parseUgovore
 import com.ugovori.studentskiugovori.model.dataclasses.CardData
@@ -17,17 +22,16 @@ import com.ugovori.studentskiugovori.model.dataclasses.WorkedHoursRealm
 import com.ugovori.studentskiugovori.model.dataclasses.toStringExport
 import com.ugovori.studentskiugovori.model.getWorkedHours
 import com.ugovori.studentskiugovori.utils.Result
-import com.ugovori.studentskiugovori.utils.Result.ParseResult
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.DayPosition
-import com.ugovori.studentskiugovori.model.data.calculateDayEarning
 import com.ugovori.studentskiugovori.utils.Result.GenericResult
+import com.ugovori.studentskiugovori.utils.Result.ParseResult
 import io.realm.Realm
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent
 import java.math.BigDecimal
 import java.math.MathContext
@@ -36,6 +40,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
 
@@ -67,6 +72,27 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val totalPerDay: StateFlow<Map<LocalDate, BigDecimal>> = _totalPerDay
     val hourlyPay: LiveData<List<BigDecimal>> = _hourlyPay
     val errorText: LiveData<String> = _errorText
+    val showGithubMessage: LiveData<Boolean> = repository.showGithubMessage.asLiveData()
+
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        Log.e("MainViewModel", "Uncaught coroutine exception", exception)
+
+        viewModelScope.launch(Dispatchers.Main) {
+            _isRefreshing.value = false
+            _loadedTxt.value = Status.FETCHING_ERROR
+            _errorText.value = exception.message ?: "Unknown error"
+
+            snackbarHostState.showSnackbar(
+                "Greška prilikom dohvaćanja podataka"
+            )
+        }
+    }
+
+    fun hideGithubMessage() {
+        viewModelScope.launch(Dispatchers.IO + handler) {
+            repository.hideGithubMessage()
+        }
+    }
 
     init {
         realm.getWorkedHours().getWorkedHours().forEach {
@@ -90,13 +116,15 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             _isRefreshing.postValue(true)
         }
         _loadedTxt.postValue(Status.FETCHING)
-        viewModelScope.launch(Dispatchers.IO) {
-            when (val result = repository.getData(
-                sharedPref.getString("username", "") ?: "",
-                sharedPref.getString("password", "") ?: "",
-                forceLogin = false,
-                timeout = !refresh
-            )) {
+        viewModelScope.launch(handler) {
+            when (val result = withContext(Dispatchers.IO) {
+                repository.getData(
+                    sharedPref.getString("username", "") ?: "",
+                    sharedPref.getString("password", "") ?: "",
+                    forceLogin = false,
+                    timeout = !refresh
+                )
+            }) {
                 is Result.LoginResult.Success -> {
                     when (val parsedData = parseUgovore(result.data as String)) {
                         is ParseResult.Success -> {
@@ -115,7 +143,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
                             _isRefreshing.postValue(false)
                             _loadedTxt.postValue(Status.FETCHED)
-                            delay(30)
+                            delay(30.milliseconds)
                             _loadedTxt.postValue(Status.FETCHED_NEW)
                             _cardData.postValue(calculateEarningsAndGetNumbers(parsedData.data))
                         }
@@ -134,7 +162,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
                 is Result.LoginResult.Refresh -> {
                     _loadedTxt.postValue(Status.FETCHED_NEW)
-                    delay(1000)
+                    delay(1000.milliseconds)
                     _isRefreshing.postValue(false)
                     return@launch
                 }
@@ -267,7 +295,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     override fun onCleared() {
         realm.close()
-        super.onCleared()
     }
 
 

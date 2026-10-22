@@ -18,10 +18,11 @@ class StudentskiUgovori : Application() {
             modules(appModule)
         }
         Realm.init(this)
-        val  config: RealmConfiguration = RealmConfiguration.Builder().name("kalendarDB") .schemaVersion(1)
-            .allowQueriesOnUiThread(true)
-            .allowWritesOnUiThread(true)
-            .build()
+        val config: RealmConfiguration =
+            RealmConfiguration.Builder().name("kalendarDB").schemaVersion(1)
+                .allowQueriesOnUiThread(true)
+                .allowWritesOnUiThread(true)
+                .build()
         Realm.setDefaultConfiguration(config)
     }
 }

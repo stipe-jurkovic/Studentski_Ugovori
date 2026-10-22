@@ -1,4 +1,4 @@
-package com.ugovori.studomatisvu.compose
+package com.ugovori.studentskiugovori.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,66 +25,68 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.model.dataclasses.Ugovor
 
 @Preview
 @Composable
 fun UgovorPreview() {
-    var showFull : Boolean by remember { mutableStateOf (false) }
-    Card(onClick = { showFull = !showFull }, modifier = Modifier
-        .padding(0.dp)
-        .zIndex(3f)) {
-        if (showFull) {
-            UgovorComposeFull(
-                ugovor = Ugovor(
-                    GODINA = 2021,
-                    UGOVOR = 19288,
-                    STATUSNAZIV = " Ispl - Plać",
-                    PARTNERNAZIVWEB = "STUDENTSKI CENTAR SPLIT",
-                    PARTNERNAZIV = "STUDENTSKI CENTAR SPLIT",
-                    POSAONAZIV = "ISPOMOĆ U KUHINJI",
-                    NETO = 1110.0,
-                    ISPLATANETO = 1110.0,
-                    VALUTAUNOS = "KN",
-                    RADIOODWEB = "14.10.2021",
-                    RADIODOWEB = "31.10.2021",
-                    CIJENAWEB = 30.0,
-                    STATUSWEB = 3,
+    var showFull: Boolean by remember { mutableStateOf(false) }
+    AppTheme {
+        Card(
+            onClick = { showFull = !showFull }, modifier = Modifier
+                .padding(0.dp)
+                .zIndex(3f)
+        ) {
+            if (showFull) {
+                UgovorComposeFull(
+                    ugovor = Ugovor(
+                        GODINA = 2021,
+                        UGOVOR = 19288,
+                        STATUSNAZIV = " Ispl - Plać",
+                        PARTNERNAZIVWEB = "STUDENTSKI CENTAR SPLIT",
+                        PARTNERNAZIV = "STUDENTSKI CENTAR SPLIT",
+                        POSAONAZIV = "ISPOMOĆ U KUHINJI",
+                        NETO = 1110.0,
+                        ISPLATANETO = 1110.0,
+                        VALUTAUNOS = "KN",
+                        RADIOODWEB = "14.10.2021",
+                        RADIODOWEB = "31.10.2021",
+                        CIJENAWEB = 30.0,
+                        STATUSWEB = 3,
+                    )
                 )
-            )
-        } else {
-            UgovorComposeMini(
-                ugovor = Ugovor(
-                    GODINA = 2021,
-                    UGOVOR = 19288,
-                    STATUSNAZIV = " Ispl - Plać",
-                    PARTNERNAZIVWEB = "STUDENTSKI CENTAR SPLIT",
-                    PARTNERNAZIV = "STUDENTSKI CENTAR SPLIT",
-                    POSAONAZIV = "ISPOMOĆ U KUHINJI",
-                    NETO = 1110.0,
-                    ISPLATANETO = 1110.0,
-                    VALUTAUNOS = "KN",
-                    RADIOODWEB = "14.10.2021",
-                    RADIODOWEB = "31.10.2021",
-                    CIJENAWEB = 30.0,
-                    STATUSWEB = 3,
+            } else {
+                UgovorComposeMini(
+                    ugovor = Ugovor(
+                        GODINA = 2021,
+                        UGOVOR = 19288,
+                        STATUSNAZIV = " Ispl - Plać",
+                        PARTNERNAZIVWEB = "STUDENTSKI CENTAR SPLIT",
+                        PARTNERNAZIV = "STUDENTSKI CENTAR SPLIT",
+                        POSAONAZIV = "ISPOMOĆ U KUHINJI",
+                        NETO = 1110.0,
+                        ISPLATANETO = 1110.0,
+                        VALUTAUNOS = "KN",
+                        RADIOODWEB = "14.10.2021",
+                        RADIODOWEB = "31.10.2021",
+                        CIJENAWEB = 30.0,
+                        STATUSWEB = 3,
+                    )
                 )
-            )
+            }
         }
     }
 }
 
 @Composable
 fun UgovorCompose(ugovor: Ugovor) {
-    var showFull : Boolean by remember { mutableStateOf (false) }
-    val shadow = Shadow(colorResource(id = R.color.md_theme_scrim), Offset(3F, 3F), blurRadius = 10F)
+    var showFull: Boolean by remember { mutableStateOf(false) }
+    val shadow = Shadow(MaterialTheme.colorScheme.scrim, Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
     val modifier = Modifier
@@ -104,7 +106,7 @@ fun UgovorCompose(ugovor: Ugovor) {
 @Composable
 fun UgovorComposeFull(ugovor: Ugovor) {
 
-    val shadow = Shadow(colorResource(id = R.color.md_theme_scrim), Offset(3F, 3F), blurRadius = 10F)
+    val shadow = Shadow(MaterialTheme.colorScheme.scrim, Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
     Column(
@@ -116,7 +118,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
     ) {
         Column(
             Modifier
-                .background(color = colorResource(id = R.color.md_theme_secondary))
+                .background(color = MaterialTheme.colorScheme.primary)
                 .zIndex(0F)
                 .wrapContentHeight()
                 .padding(4.dp, 2.dp, 4.dp, 2.dp)
@@ -126,7 +128,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
         }
         Column(
             Modifier
-                .background(colorResource(id = R.color.md_theme_background))
+                .background(MaterialTheme.colorScheme.background)
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
@@ -137,7 +139,7 @@ fun UgovorComposeFull(ugovor: Ugovor) {
             )
             UgovorText(
                 "Neto (Isplata neto): ",
-                (ugovor.NETO.toString() ?: "") + " (" + (ugovor.ISPLATANETO.toString() ?: "") + ")" + " " + ugovor.VALUTAUNOS
+                ugovor.NETO.toString() + " (" + ugovor.ISPLATANETO.toString() + ")" + " " + ugovor.VALUTAUNOS
             )
 
             if ((ugovor.RADIOODWEB?.split(".")?.get(2) ?: "") == (ugovor.RADIODOWEB?.split(".")
@@ -145,18 +147,19 @@ fun UgovorComposeFull(ugovor: Ugovor) {
             ) {
                 UgovorText(
                     "Radio: ",
-                    (ugovor.RADIOODWEB?.dropLast(4) + " - " + ugovor.RADIODOWEB) ?: ""
+                    (ugovor.RADIOODWEB?.dropLast(4) + " - " + ugovor.RADIODOWEB)
                 )
             } else {
-                UgovorText("Radio: ", (ugovor.RADIOODWEB + " - " + ugovor.RADIODOWEB) ?: "")
+                UgovorText("Radio: ", (ugovor.RADIOODWEB + " - " + ugovor.RADIODOWEB))
             }
         }
     }
 }
+
 @Composable
 fun UgovorComposeMini(ugovor: Ugovor) {
 
-    val shadow = Shadow(colorResource(id = R.color.md_theme_scrim), Offset(3F, 3F), blurRadius = 10F)
+    val shadow = Shadow(MaterialTheme.colorScheme.scrim, Offset(3F, 3F), blurRadius = 10F)
     val shape = RoundedCornerShape(8.dp)
 
     Column(
@@ -168,7 +171,7 @@ fun UgovorComposeMini(ugovor: Ugovor) {
     ) {
         Column(
             Modifier
-                .background(color = colorResource(id = R.color.md_theme_secondary))
+                .background(color = MaterialTheme.colorScheme.primary)
                 .zIndex(0F)
                 .wrapContentHeight()
                 .padding(4.dp, 2.dp, 4.dp, 2.dp)
@@ -179,15 +182,15 @@ fun UgovorComposeMini(ugovor: Ugovor) {
         }
         Column(
             Modifier
-                .background(colorResource(id = R.color.md_theme_background))
+                .background(MaterialTheme.colorScheme.surfaceContainer)
                 .zIndex(0F)
         ) {
             UgovorText("Status: ", ugovor.STATUSNAZIV ?: "")
-            if(ugovor.STATUSNAZIV?.contains("Ispl") == true){
-            UgovorText(
-                "Neto (Isplata neto): ",
-                (ugovor.NETO.toString() ?: "") + " (" + (ugovor.ISPLATANETO.toString() ?: "") + ")" + " " + ugovor.VALUTAUNOS
-            )
+            if (ugovor.STATUSNAZIV?.contains("Ispl") == true) {
+                UgovorText(
+                    "Neto (Isplata neto): ",
+                    ugovor.NETO.toString() + " (" + ugovor.ISPLATANETO.toString() + ")" + " " + ugovor.VALUTAUNOS
+                )
             }
 
         }
@@ -200,10 +203,10 @@ fun UgovorText(text: String = "", value: String = "") {
         Modifier
             .wrapContentWidth()
             .wrapContentHeight()
-    var textColor = colorResource(id = R.color.md_theme_onBackground)
+    var textColor = MaterialTheme.colorScheme.onSurface
 
     if (text.contains("Poslodavac:")) {
-        textColor = MaterialTheme.colorScheme.onSecondary
+        textColor = MaterialTheme.colorScheme.onPrimary
     }
     var modifierValue = modifier
     val textColorValue = textColor

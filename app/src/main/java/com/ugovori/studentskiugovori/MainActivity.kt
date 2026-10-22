@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.navigation.compose.rememberNavController
@@ -19,14 +20,18 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPref: SharedPreferences by KoinJavaComponent.inject(SharedPreferences::class.java)
         val mainViewModel: MainViewModel by KoinJavaComponent.inject(MainViewModel::class.java)
-
-        if (sharedPref.getString("username", "") == "" || sharedPref.getString("password", "") == "") {
+        enableEdgeToEdge()
+        if (sharedPref.getString("username", "") == "" || sharedPref.getString(
+                "password",
+                ""
+            ) == ""
+        ) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         } else {
             setContent {
                 AppTheme {
-                    MainCompose( rememberNavController(), mainViewModel, logout = { logout() })
+                    MainCompose(rememberNavController(), mainViewModel, logout = { logout() })
                 }
             }
         }

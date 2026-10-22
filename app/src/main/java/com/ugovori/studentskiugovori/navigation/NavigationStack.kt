@@ -2,23 +2,26 @@ package com.ugovori.studentskiugovori.navigation
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -27,23 +30,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ugovori.studentskiugovori.MainViewModel
 import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.compose.AppTheme
-import com.ugovori.studentskiugovori.compose.calendarcompose.clickable
 import com.ugovori.studentskiugovori.ui.calculation.CalcWholeCompose
 import com.ugovori.studentskiugovori.ui.fulllist.FullListCompose
 import com.ugovori.studentskiugovori.ui.home.HomeCompose
 
 val topLevelRoutes = listOf(
-    TopLevelRoute<FullList>(
+    TopLevelRoute(
         route = FullList,
         iconId = R.drawable.all_contracts_icon,
         nameId = R.string.svi_ugovori
     ),
-    TopLevelRoute<Home>(
+    TopLevelRoute(
         route = Home,
         iconId = R.drawable.home_icon,
         nameId = R.string.homeText
     ),
-    TopLevelRoute<Calculation>(
+    TopLevelRoute(
         route = Calculation,
         iconId = R.drawable.calculation_icon,
         nameId = R.string.izracun
@@ -51,7 +53,11 @@ val topLevelRoutes = listOf(
 )
 
 @Composable
-fun MainCompose(navController: NavHostController, mainViewModel: MainViewModel, logout: () -> Unit) {
+fun MainCompose(
+    navController: NavHostController,
+    mainViewModel: MainViewModel,
+    logout: () -> Unit
+) {
     AppTheme {
         Scaffold(
             topBar = { TopBar(navController, logout) },
@@ -82,8 +88,13 @@ fun MainCompose(navController: NavHostController, mainViewModel: MainViewModel, 
 
 @Composable
 fun BottomBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     NavigationBar {
         topLevelRoutes.forEach { topLevelRoute ->
+            val isSelected =
+                currentDestination?.hierarchy?.any { it.hasRoute(topLevelRoute.route::class) } == true
             NavigationBarItem(
                 icon = {
                     Icon(
@@ -93,7 +104,7 @@ fun BottomBar(navController: NavHostController) {
                     )
                 },
                 label = { Text(stringResource(topLevelRoute.nameId)) },
-                selected = false,
+                selected = isSelected,
                 onClick = {
                     navController.navigate(topLevelRoute.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -111,18 +122,20 @@ fun BottomBar(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navController: NavController, logout: () -> Unit) {
-    val currentDestination =
-        navController.currentBackStackEntryAsState().value?.destination?.route?.substringAfterLast(".") ?: ""
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val currentRoute = topLevelRoutes.find { topLevelRoute ->
+        currentDestination?.hierarchy?.any { it.hasRoute(topLevelRoute.route::class) } == true
+    }
+
     TopAppBar(
-        title = { Text(topLevelRoutes.find {
-            it.route.toString() == currentDestination
-        }?.nameId?.let { stringResource(it) } ?: "") },
+        title = { Text(currentRoute?.nameId?.let { stringResource(it) } ?: "") },
         actions = {
-            Box(Modifier.clickable{ logout() }) {
+            IconButton(onClick = logout) {
                 Icon(
                     painter = painterResource(R.drawable.logout_icon),
-                    contentDescription = "Odjava",
-                    modifier = Modifier.size(30.dp)
+                    contentDescription = stringResource(R.string.title_log_out),
+                    modifier = Modifier.size(28.dp)
                 )
             }
         }

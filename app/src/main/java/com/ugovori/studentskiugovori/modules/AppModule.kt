@@ -15,12 +15,13 @@ import org.koin.dsl.module
 
 val appModule = module {
     single<NetworkServiceInterface> { NetworkService() }
-    single { Repository(get()) }
+    single { createSharedPreferences(androidContext()) }
+    single { Repository(get(), get()) }
     single { LoginViewModel(get()) }
     single { MainViewModel(get()) }
-    single { createSharedPreferences( androidContext() ) }
 }
-fun createSharedPreferences( applicationContext : Context): SharedPreferences {
+
+fun createSharedPreferences(applicationContext: Context): SharedPreferences {
 
     val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 

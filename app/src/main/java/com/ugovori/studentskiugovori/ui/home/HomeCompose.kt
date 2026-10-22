@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -24,7 +26,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,8 +36,9 @@ import com.ugovori.studentskiugovori.R
 import com.ugovori.studentskiugovori.Status
 import com.ugovori.studentskiugovori.compose.CardCompose
 import com.ugovori.studentskiugovori.compose.CircularIndicator
+import com.ugovori.studentskiugovori.compose.GithubMessage
+import com.ugovori.studentskiugovori.compose.UgovorCompose
 import com.ugovori.studentskiugovori.model.dataclasses.CardData
-import com.ugovori.studomatisvu.compose.UgovorCompose
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -50,12 +52,13 @@ fun HomeCompose(mainViewModel: MainViewModel) {
     })
     val ugovori = mainViewModel.ugovori.observeAsState().value
     val error = mainViewModel.errorText.observeAsState().value
+    val showGithubMessage = mainViewModel.showGithubMessage.observeAsState(true).value
 
 
     Scaffold(
         modifier = Modifier
             .pullRefresh(pullRefreshState)
-            .background(color = colorResource(id = R.color.md_theme_background)),
+            .background(color = MaterialTheme.colorScheme.background),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         contentWindowInsets = WindowInsets(0.dp)
     ) { innerPadding ->
@@ -98,8 +101,15 @@ fun HomeCompose(mainViewModel: MainViewModel) {
                             }
                         }
                     }
-                    items(ugovori.size) { index ->
-                        val ugovor = ugovori[index]
+                    if (showGithubMessage) {
+                        item {
+                            GithubMessage(mainViewModel::hideGithubMessage)
+                        }
+                    }
+                    items(
+                        items = ugovori,
+                        key = { u -> "${u.GODINA}_${u.UGOVOR}" }
+                    ) { ugovor ->
                         if (ugovor.STATUSNAZIV?.contains("Izdan") == true) {
                             UgovorCompose(ugovor)
                         }
@@ -118,10 +128,12 @@ fun HomeCompose(mainViewModel: MainViewModel) {
                     }
                 }
 
-            } else if(loadedTxt == Status.FETCHING_ERROR) {
-                LazyColumn(modifier = Modifier.fillMaxSize(),
+            } else if (loadedTxt == Status.FETCHING_ERROR) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     item {
                         Icon(
                             painter = painterResource(R.drawable.error_icon),
@@ -144,9 +156,3 @@ fun HomeCompose(mainViewModel: MainViewModel) {
         }
     }
 }
-
-
-
-
-
-
